@@ -1,6 +1,7 @@
 # Community detection in co-expression networks
 
-Program that from the selected file contructs a network and detects present communities by applying Louvain's algorithm of community detection. 
+Program that from the selected file contructs a network and detects present communities by applying Louvain's algorithm of community detection. Also, it extracts some main features of each community and computes the distance between them.
+The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
 
 
 ## Getting Started
