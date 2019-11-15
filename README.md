@@ -1,1 +1,1 @@
-# APA-Project-Networks
+# Community detection in co-expression networks
