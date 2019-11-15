@@ -7,7 +7,7 @@
 #  
 # To come: implementation of a ball-tree structure to perform fast sorting.	
 # 
-# Alda Sabalić, Bea Urda and Joan Térmens                      Last revision: 15th of November 2019
+# Alda Sabalić, Beatriz Urda and Joan Térmens                  Last revision: 15th of November 2019
 #--------------------------------------------------------------------------------------------------
 
 import pandas as pd
