@@ -1,3 +1,15 @@
+#--------------------------------------------------------------------------------------------------
+# APA PROJECT: COMMUNITY SEARCH AND SORT
+#
+# This code is degined to generate and filter graphs, search communities on it with the Louvain
+# algorithm, characterize the communities with 10 features and computes a distance between each
+# pair. Features used:
+#  
+# To come: implementation of a ball-tree structure to perform fast sorting.	
+# 
+# Alda Sabalić, Bea Urda and Joan Térmens                      Last revision: 15th of November 2019
+#--------------------------------------------------------------------------------------------------
+
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
@@ -8,18 +20,48 @@ import community
 
 
 def filtered(filename,threshold = 0.55):
+	'''
+	Function: filtered
+	This function generates a data frame from a given file (filename) and filters it removing the 
+	edges with a weight lower than a given threshold.
+	
+	Input:  * filename: a tab separated file containing 3 columns (source node, target node and 
+			weight) and a row for each edge
+		    * threshold: minimum weight that an edge has to have ho not being filtered.
+	Output: * df_filtered: filtered dataframe, has 3 columns, keyed 'gene1', 'gene2' and 'edge' and
+	 		a row for each edge.
+	'''
 	df = pd.read_csv(filename, sep="\t")
 	df_filtered=df.loc[ (df['edge'] > threshold) & (df['gene1'] != df['gene2']) ]
 	#print(df_filtered)
 	return df_filtered
 
 def network(df):
-	G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2')
+	'''
+	Function: network
+	This function creates a grap, G, from a dataframe, df, using NetworkX library.
+	
+	Input:  * df: dataframe with 3 columns, keyed 'gene1', 'gene2' and 'edge' and a row for each 
+		edge.
+	Output: * G: Network graph
+	'''
+	G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2', edge_attr='edge')
 	#print(len(G.nodes()))
 	return G
-#-----------------------------------------
+
+#--------------------------------------------------------------------------------------------------
+
 def louvain(G):
-	# Starting with an initial partition of the graph and running the Louvain algorithm for Community Detection
+	'''
+	Function: louvain
+	This function implements the Louvain community search algorithm in a graph, G, and returns a 
+	dictionary of the partitions.
+
+	Input:  * G: a graph generated with NetworkX
+	Output: * dic_nodes: a dictionary like {community_number:'node_1 | ... | node_N'}
+	'''
+	# Starting with an initial partition of the graph and running the Louvain algorithm 
+	# for Community Detection
 	partition=community.best_partition(G, weight='MsgCount')
 	#print('Completed Louvain algorithm .. . . ' )
 	values=[partition.get(node) for node in G.nodes()]
@@ -57,7 +99,8 @@ def louvain(G):
 	# Creating the Graph and also calculating Modularity
 	#pos_louvain=nx.spring_layout(G_comm)
 
-
+# Community class, each comunity (parition) found with Louvain algorithm is characterized by 10
+# features and stored as an instance of this class.
 class Community(object):
     def __init__(self,dens,size,rel_dens,max_btw,avg_btw,max_centr,avg_centr,max_load,avg_load,mod):
         self.dens = dens
@@ -73,6 +116,22 @@ class Community(object):
 
 
 def ComputeFeatures(set_nodes,df_network,key1='node1',key2='node2',weight = None):
+    '''
+    Function: ComputeFeatures
+    This function computes the following features of a given community in a graph: (1) density, 
+    (2) size, (3) relative density,  (4) maximum betweenness centrality,  (5) average betweenness 
+    centrality, (6) maximum degree centrality, (7) average degree centrality, (8) maximum load 
+    centrality, (9) average load centrality and (10) modularity. 
+
+    Input:  * set_nodes: iterable containing the community nodes
+    	    * df_network: network dataframe with a column for the source node (key1), a column for
+	    the target node (key2) and an optional column for the edge weight. Has a row for each
+	    edge.
+	    * key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
+	    'node2'.
+	    * weight: key of the node weight in the dataframe. By default, None (unweighted graph)
+     Output: * comm: instance of the Community class containing the 10 specified features.
+     '''
 
     df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
     g_comm = nx.from_pandas_edgelist(df_comm,key1,key2,edge_attr = weight) # community graph
