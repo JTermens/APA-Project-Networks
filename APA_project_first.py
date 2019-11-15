@@ -17,7 +17,7 @@ def network(df):
 	G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2')
 	#print(len(G.nodes()))
 	return G
-#-----------------------------------------
+
 def louvain(G):
 	# Starting with an initial partition of the graph and running the Louvain algorithm for Community Detection
 	partition=community.best_partition(G, weight='MsgCount')
