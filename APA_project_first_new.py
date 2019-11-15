@@ -12,18 +12,17 @@ from functools import reduce
 def filtered(filename,threshold = 0.55):
 	df = pd.read_csv(filename, sep="\t")
 	df_filtered=df.loc[ (df['edge'] > threshold) & (df['gene1'] != df['gene2']) ]
-	#print(df_filtered)
 	return df_filtered
 
 def network(df):
 	G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2')
-	#print(len(G.nodes()))
 	return G
-#-----------------------------------------
+
 def louvain(G):
+	"""Detecting communities by using Louvain's algorithm."""
 	# Starting with an initial partition of the graph and running the Louvain algorithm for Community Detection
 	partition=community.best_partition(G, weight='MsgCount')
-	#print('Completed Louvain algorithm .. . . ' )
+
 	values=[partition.get(node) for node in G.nodes()]
 	list_com=partition.values()
 
@@ -41,23 +40,18 @@ def louvain(G):
 	        dict_nodes.update({community_num:community_node})
 
 	# Creating a new graph to represent the communities created by the Louvain algorithm
-	#matplotlib.rcParams['figure.figsize']= [12, 8]
 	G_comm=nx.Graph()
-	#print('im here')
-	
 
 	# Populating the data from the node dictionary created earlier
 	G_comm.add_nodes_from(dict_nodes)
-	#print(G_comm.nodes())
+
 	# Calculating modularity and the total number of communities
 	mod=community.modularity(partition,G)
 	print("Total number of Communities=", len(G_comm.nodes()))
 	print("Modularity: ", mod)
-	
-	#print(dict_nodes.keys())
+
 	return dict_nodes
-	# Creating the Graph and also calculating Modularity
-	#pos_louvain=nx.spring_layout(G_comm)
+
 
 def euclidean_distance(a,b):
     """Returns euclidean distance for vector of dimension n>=2"""
