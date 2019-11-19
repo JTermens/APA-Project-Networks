@@ -89,7 +89,7 @@ def louvain(G):
 
 
 def euclidean_distance(a,b):
-    """Returns euclidean distance for vector of dimension n>=2"""
+    '''Returns euclidean distance for vector of dimension n>=2'''
     if(len(a) != len(b)):
         return "error"
     else:
@@ -114,9 +114,9 @@ class Community(object):
     
         
     def distance(self,other,*argv):
-        """Returns the distance between the current community and other instance of
+        '''Returns the distance between the current community and other instance of
         the class using the attributes specified in argv. If no arg is provided,
-        it uses all the attributes"""
+        it uses all the attributes'''
         if (len(argv) == 0):
             features1 = (self.dens,self.size,self.rel_dens,self.max_btw, self.avg_btw, self.max_centr, self.avg_centr, self.max_load, self.avg_load, self.mod)
             features2 = (self.dens,self.size,self.rel_dens,self.max_btw, self.avg_btw, self.max_centr, self.avg_centr, self.max_load, self.avg_load, self.mod)
