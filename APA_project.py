@@ -190,42 +190,45 @@ class Tree(object):
 		self.left = left
 		self.right = right
 
-def MakeKdTree(list_inst,i=0,list_features = None):
+def MakeKdTree(list_inst,i=0,list_features = None, first_iter = True):
     '''
     Function: MakeKdTree
-    This function recursively takes a list of instances and a list of attributes (or features) and generates a k-d tree using the 
-    specified features as the different axis. By default the function considers list_inst a list of Community class instances and 
+    This function recursively takes a list of instances and a list of attributes (or features) and generates a k-d tree using the
+    specified features as the different axis. By default the function considers list_inst a list of Community class instances and
     considers much instances as possible (with max 10) to ensure that N > 2^k.
-    
+
     Input:  *list_inst: a list of instances of a class
             *i: axis number in which the list_inst is sorted and paritioned. by default, 0
 	    *list_features: list of the features/attributes that will be used as axis to generate the K-d tree. By default, as
 	    much instances as possible (with max 10) to ensure that N > 2^k
     Output: *tree: binary tree, instance of class Tree
     '''
-    if len(list_inst) > 1:
-        if (list_features == None):
-            axis_key = ('dens','size','rel_dens','max_btw', 'avg_btw', 'max_centr', 'avg_centr', 'max_load', 'avg_load', 'mod')
+    if(first_iter): # axis key is just created at the first iteration, then its passed list_features
+	if (list_features == None):
+	    axis_key = ('dens','size','rel_dens','max_btw', 'avg_btw', 'max_centr', 'avg_centr', 'max_load', 'avg_load', 'mod')
 	    if (len(list_inst) < 2**(10)): # ensures N > 2^k, so the algorithm remains efficient
 	        optimal_num_features = int(np.log2(len(list_inst)))
 		axis_key = axis_key[:optimal_num_features]
-        elif(i == 0): # ensures the attribute checking its just done at the first iteration
-            axis_key = list()
-            for feature in list_features:
-                if (feature in dir(list_inst[0])):
-                    axis_key.append(feature)
-                else:
-                    print("%s is not an attribute of the instances given" %(feature))
-                axis_key = tuple(axis_key)
+	    else: # ensures the attribute checking its just done at the first iteration
+		axis_key = list()
+		for feature in list_features:
+		    if (feature in dir(list_inst[0])):
+		        axis_key.append(feature)
+			else:
+			    print("%s is not an attribute of the instances given" %(feature))
+		axis_key = tuple(axis_key)
+    else:
+	axis_key = tuple(list_features)
 
-        dim = len(axis_key)
-        list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
-        i = (i+1) % dim
-        half = len(list_inst) >>1 # just division by 2
-        return Tree(list_inst[half], MakeKdTree(list_inst[:half],i,list_features),MakeKdTree(list_inst[half+1:],i,list_features))
+    if len(list_inst) > 1:
+	dim = len(axis_key)
+	list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
+	i = (i + 1) % dim
+	half = len(list_inst) >>1 # just division by 2
+	return Tree(list_inst[half], MakeKdTree(list_inst[:half],i,axis_key,False),MakeKdTree(list_inst[half+1:],i,axis_key,False))
 
     elif len(list_inst) == 1:
-        return Tree(list_inst[0])
+	return Tree(list_inst[0])
 
 if __name__=='__main__': 
 
