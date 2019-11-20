@@ -149,7 +149,7 @@ def ComputeFeatures(set_nodes,df_network,key1='node1',key2='node2',weight = None
 	    * key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
 	    'node2'.
 	    * weight: key of the node weight in the dataframe. By default, None (unweighted graph)
-     Output: * comm: instance of the Community class containing the 10 specified features.
+    Output: * comm: instance of the Community class containing the 10 specified features.
      '''
 
     df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
@@ -182,6 +182,8 @@ def ComputeFeatures(set_nodes,df_network,key1='node1',key2='node2',weight = None
 
     return comm
 
+# Tree class, implements an object with 3 atributes: node is the value of the tree node, left is the left branch and right, 
+# the right one
 class Tree(object):
 	def __init__(self,node,left=None,right=None):
 		self.node = node
@@ -189,6 +191,17 @@ class Tree(object):
 		self.right = right
 
 def MakeKdTree(list_inst,i=0,list_features = None):
+    '''
+    Function: MakeKdTree
+    This function recursively takes a list of instances and a list of attributes (or features) and generates a k-d tree using the 
+    specified features as the different axis. By default the function considers list_inst a list of Community class instances and 
+    considers all the 10 features of that class.
+    
+    Input:  *list_inst: a list of instances of a class
+            *i: axis number in which the list_inst is sorted and paritioned. by default, 0
+	    *list_features: list of the features/attributes that will be used as axis to generate the K-d tree
+    Output: *tree: binary tree, instance of class Tree
+    '''
     if len(list_inst) > 1:
         if (list_features == None):
             axis_key = ('dens','size','rel_dens','max_btw', 'avg_btw', 'max_centr', 'avg_centr', 'max_load', 'avg_load', 'mod')
@@ -202,9 +215,9 @@ def MakeKdTree(list_inst,i=0,list_features = None):
                 axis_key = tuple(axis_key)
 
         dim = len(axis_key)
-        list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i]))
+        list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
         i = (i+1) % dim
-        half = len(list_inst) >>1
+        half = len(list_inst) >>1 # just division by 2
         return Tree(list_inst[half], MakeKdTree(list_inst[:half],i,list_features),MakeKdTree(list_inst[half+1:],i,list_features))
 
     elif len(list_inst) == 1:
