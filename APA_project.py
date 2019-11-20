@@ -182,6 +182,34 @@ def ComputeFeatures(set_nodes,df_network,key1='node1',key2='node2',weight = None
 
     return comm
 
+class Tree(object):
+	def __init__(self,node,left=None,right=None):
+		self.node = node
+		self.left = left
+		self.right = right
+
+def MakeKdTree(list_inst,i=0,list_features = None):
+    if len(list_inst) > 1:
+        if (list_features == None):
+            axis_key = ('dens','size','rel_dens','max_btw', 'avg_btw', 'max_centr', 'avg_centr', 'max_load', 'avg_load', 'mod')
+        else:
+            axis_key = list()
+            for feature in list_features:
+                if (feature in dir(list_inst[0])):
+                    axis_key.append(feature)
+                else:
+                    print("%s is not an attribute of the instances given" %(feature))
+                axis_key = tuple(axis_key)
+
+        dim = len(axis_key)
+        list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i]))
+        i = (i+1) % dim
+        half = len(list_inst) >>1
+        return Tree(list_inst[half], MakeKdTree(list_inst[:half],i,list_features),MakeKdTree(list_inst[half+1:],i,list_features))
+
+    elif len(list_inst) == 1:
+        return Tree(list_inst[0])
+
 if __name__=='__main__': 
 
 	#df = pd.read_csv("4_coexpr_geo_v2.txt", sep="\t")
@@ -203,6 +231,8 @@ if __name__=='__main__':
     print("The first community has %s distance from itself" %(x1))
     print("The first community has %s distance from the second one" %(x2))
     print("The first community has %s distance from the second one" %(x3))
+    print("Generating a k-dim tree...")
+    tree = MakeKdTree(community_list)
     
     
     
