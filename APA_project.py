@@ -196,11 +196,11 @@ def RecursiveKdTree(list_inst,axis_key,i=0):
 	This function creates a K-d tree recursively from a list of instances (list_inst) and axis_key,
 	a tuple containing the keys (as strings) of the class attributes that will be used as axis.
 	Input:  *list_inst: a list of instances of a class
-			*axis_key: tuple containing the keys (as strings) of the class attributes that will be
-			used as axis.
-			*i: axis number in which the list_inst is sorted and paritioned. By default, 0.
+		*axis_key: tuple containing the keys (as strings) of the class attributes that will be
+		used as axis.
+		*i: axis number in which the list_inst is sorted and paritioned. By default, 0.
 	Output: *instance of Tree class where the node is the median point, left calls to create a left
-			subtree and right, a right one.
+		subtree and right, a right one.
 	'''
 	if len(list_inst) > 1:
 		dim = len(axis_key)
@@ -213,9 +213,9 @@ def RecursiveKdTree(list_inst,axis_key,i=0):
 	elif len(list_inst) == 1:
 		return Tree(list_inst[0])
 
-def GetKeyAxis(list_inst,list_attr = None):
+def GetAxisKey(list_inst,list_attr = None):
 	'''
-	Function: GetKeyAxis
+	Function: GetAxisKey
 	This function checks if the given instances are from the same class and creates axis_key, a
 	tuple containing the keys (as strings) of the class attributes that will be used as axis.
 	This could be done by two ways:
@@ -225,9 +225,9 @@ def GetKeyAxis(list_inst,list_attr = None):
 		ensure efficiency (N > 2^k) and generates axis_key with the firsts ones (ordered
 		alphabetically by the attribute key)
 	Input:  *list_inst: list of instances of a certain class
-			*list_attr: list of attributes of the given instances, by default, None
+		*list_attr: list of attributes of the given instances, by default, None
 	Output: *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-			used as axis to make a k-d tree.
+		used as axis to make a k-d tree.
 	'''
 	# chek if all instances belong to the same class
 	if(len(list_inst) > 0):
@@ -261,11 +261,11 @@ def MakeKdTree(list_inst,list_attr = None):
 	generate the axis_key that is a tuple containing the keys (as strings) of the class attributes
 	that will be used as axis. Then, calls to RecursiveKdTree which recursively generates the tree
 	Input:  *list_inst: a list of instances of a class
-			*list_attr: list of attributes of the given instances, by default, None
+		*list_attr: list of attributes of the given instances, by default, None
 	Output: *kd_tree: k-dim binary tree, instance of class Tree
 	'''
 
-	axis_key = GetKeyAxis(list_inst,list_attr)
+	axis_key = GetAxisKey(list_inst,list_attr)
 	kd_tree = RecursiveKdTree(list_inst,axis_key)
 
 	return kd_tree
