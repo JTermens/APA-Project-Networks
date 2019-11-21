@@ -135,21 +135,21 @@ class Community(object):
 			return (euclidean_distance(features1,features2))
 
 
-def ComputeFeatures(set_nodes,df_network,key1='node1',key2='node2',weight = None):
+def compute_features(set_nodes,df_network,key1='node1',key2='node2',weight = None):
 	'''
-	Function: ComputeFeatures
+	Function: compute_features
 	This function computes the following features of a given community in a graph: (1) density, 
 	(2) size, (3) relative density,  (4) maximum betweenness centrality,  (5) average betweenness 
 	centrality, (6) maximum degree centrality, (7) average degree centrality, (8) maximum load 
 	centrality, (9) average load centrality and (10) modularity. 
 	Input:  * set_nodes: iterable containing the community nodes
-			* df_network: network dataframe with a column for the source node (key1), a column for
-			the target node (key2) and an optional column for the edge weight. Has a row for each
-			edge.
-			* key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
-			'node2'.
-			* weight: key of the node weight in the dataframe. By default, None (unweighted graph)
-			Output: * comm: instance of the Community class containing the 10 specified features.
+		* df_network: network dataframe with a column for the source node (key1), a column for
+		the target node (key2) and an optional column for the edge weight. Has a row for each
+		edge.
+		* key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
+		'node2'.
+		* weight: key of the node weight in the dataframe. By default, None (unweighted graph)
+	Output: * comm: instance of the Community class containing the 10 specified features.
 	'''
 	
 	df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
@@ -190,9 +190,9 @@ class Tree(object):
 		self.left = left
 		self.right = right
 
-def RecursiveKdTree(list_inst,axis_key,i=0):
+def recursive_kd_tree(list_inst,axis_key,i=0):
 	'''
-	Function: RecursiveKdTree
+	Function: recursive_kd_tree
 	This function creates a K-d tree recursively from a list of instances (list_inst) and axis_key,
 	a tuple containing the keys (as strings) of the class attributes that will be used as axis.
 	Input:  *list_inst: a list of instances of a class
@@ -208,14 +208,14 @@ def RecursiveKdTree(list_inst,axis_key,i=0):
 		i = (i + 1) % dim
 		half = len(list_inst) >>1 # just division by 2 moving the bits
 
-		return Tree(list_inst[half], RecursiveKdTree(list_inst[:half],axis_key,i),RecursiveKdTree(list_inst[half+1:],axis_key,i))
+		return Tree(list_inst[half], recursive_kd_tree(list_inst[:half],axis_key,i),recursive_kd_tree(list_inst[half+1:],axis_key,i))
 
 	elif len(list_inst) == 1:
 		return Tree(list_inst[0])
 
-def GetAxisKey(list_inst,list_attr = None):
+def get_axis_key(list_inst,list_attr = None):
 	'''
-	Function: GetAxisKey
+	Function: get_axis_key
 	This function checks if the given instances are from the same class and creates axis_key, a
 	tuple containing the keys (as strings) of the class attributes that will be used as axis.
 	This could be done by two ways:
@@ -253,9 +253,9 @@ def GetAxisKey(list_inst,list_attr = None):
 
 	return axis_key
 
-def MakeKdTree(list_inst,list_attr = None):
+def make_kd_tree(list_inst,list_attr = None):
 	'''
-	Function: MakeKdTree
+	Function: make_kd_tree
 	This function recursively takes a list of instances and a list of attributes and generates a
 	k-dim tree using the specified features as the different axis. Firstly calls to GetKeyAxis to
 	generate the axis_key that is a tuple containing the keys (as strings) of the class attributes
@@ -265,10 +265,123 @@ def MakeKdTree(list_inst,list_attr = None):
 	Output: *kd_tree: k-dim binary tree, instance of class Tree
 	'''
 
-	axis_key = GetAxisKey(list_inst,list_attr)
-	kd_tree = RecursiveKdTree(list_inst,axis_key)
+	axis_key = get_axis_key(list_inst,list_attr)
+	kd_tree = recursive_kd_tree(list_inst,axis_key)
 
-	return kd_tree
+	return kd_tree,axis_key
+
+def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
+    '''
+    Function: get_nearest_neighbour
+    This function traverses a given kd-tree to find the closest instance to the pivot. Firstly
+    checks that the kd-tree's root node and the pivot are instances of the same class and then
+    recursively tranveses the kd-tree looking for the closest instance and saving it as best.
+    Input:  *pivot: instance for wich the function searches for the nearest neighbour.
+            *kd_tree: a kd-tree of instances of the same class than pivot.
+            *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
+            *dist_func: distance function.
+            *axis_key: tuple containing the keys (as strings) of the class attributes that will be
+        	used as axis to make a k-d tree.
+            *axis number in which the compairsons are done. By default, 0.
+            *best: [minimum distance, closer instance].
+    Output: *best: tuple(minimum distance, closer instance).
+    '''
+
+    if kd_tree is not None:
+
+        pivot_class = pivot.__class__
+        if not isinstance(kd_tree.node,pivot_class): #checks if pivot and node are from the same class
+            print("Error: the pivot and the elements of the k-d tree must be instances of the same class")
+
+        # dist is the distance from the pivot to the root node of the actual kd-tree
+        # dist_x is the distance from the kd-tree partition line and the pivot
+        dist = dist_func(kd_tree.node,*axis_key)
+        dist_x = kd_tree.node.__getattribute__(axis_key[i]) - pivot.__getattribute__(axis_key[i])
+
+        if not best: # is there is no best result, save the actual one
+            best = [dist,kd_tree.node]
+        elif dist < best[0]: # if there is a best result, uptade if the actual is better
+            best[0], best[1] = dist, kd_tree.node
+
+        if (dist_x < 0): # if dist_x < 0 <-> pivot is at the right side
+            next_branch = kd_tree.right
+            opp_branch = kd_tree.left
+        else: # if dist_x > 0 <-> pivot is at the left side
+            next_branch = kd_tree.left
+            opp_branch = kd_tree.right
+
+        i = (i+1) % dim # next axis number
+
+        # follow searching at the actual side of the partition (branch)
+        get_nearest_neighbour(pivot,next_branch,dim,dist_func,axis_key,i,best)
+
+        # if pivot is closer to the partition line than to the pivot there could be closer points
+        # at the other branch so the function looks for them
+        if (dist > np.absolute(dist_x)):
+            get_nearest_neighbour(pivot,opp_branch,dim,dist_func,axis_key,i,best)
+    return tuple(best)
+
+def get_k_neighbours(pivot,kd_tree,k,dim,dist_func,axis_key,i=0,heap=None):
+    '''
+    Function: get_k_neighbours
+    This function traverses a given kd-tree to find the k closest instances to the pivot. Firstly
+    checks that the kd-tree's root node and the pivot are instances of the same class and then
+    recursively tranveses the kd-tree looking for the closest instances and saving it in a heap.
+    Input:  *pivot: instance for wich the function searches for the k nearest neighbours.
+            *kd_tree: a kd-tree of instances of the same class than pivot.
+            *k: desired number of neighbours
+            *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
+            *dist_func: distance function.
+            *axis_key: tuple containing the keys (as strings) of the class attributes that will be
+        	used as axis to make a k-d tree.
+            *axis number in which the compairsons are done. By default, 0.
+            *heap: max heap containing the k closest instances. By default, None.
+    Output: *neighbours: list of k tuples as (distance(node,pivot),node) which contains the k
+            closest instances and its distances to the pivot.
+    '''
+    import heapq
+
+    is_root = not heap
+    if is_root: # if there is no heap, create one
+        heap = []
+
+    if kd_tree is not None:
+
+        pivot_class = pivot.__class__
+        if not isinstance(kd_tree.node,pivot_class): #checks if pivot and node are from the same class
+            print("Error: the pivot and the elements of the k-d tree must be instances of the same class")
+
+        # dist is the distance from the pivot to the root node of the actual kd-tree
+        # dist_x is the distance from the kd-tree partition line and the pivot
+        dist = dist_func(kd_tree.node,*axis_key)
+        dist_x = kd_tree.node.__getattribute__(axis_key[i]) - pivot.__getattribute__(axis_key[i])
+
+        if len(heap) < k: # if the heap has less than k instances, add the actual one
+            # distances in the heap are negative so that the farests instances will leave first
+            heapq.heappush(heap, (-dist, kd_tree.node)) # add to the heap
+        elif dist < -heap[0][0]: # if the actual instance is better than the worst in the heap
+            heapq.heappushpop(heap, (-dist, kd_tree.node)) # change the worst for the actual one
+
+        if (dist_x < 0): # if dist_x < 0 <-> pivot is at the right side
+            next_branch = kd_tree.right
+            opp_branch = kd_tree.left
+        else: # if dist_x > 0 <-> pivot is at the left side
+            next_branch = kd_tree.left
+            opp_branch = kd_tree.right
+
+        i = (i+1) % dim # next axis number
+
+        # follow searching at the actual side of the partition (branch)
+        get_k_neighbours(pivot,next_branch,k,dim,dist_func,axis_key,i,heap)
+
+        # if pivot is closer to the partition line than to the pivot there could be closer points
+        # at the other branch so the function looks for them
+        if (dist > np.absolute(dist_x)):
+            get_k_neighbours(pivot,opp_branch,k,dim,dist_func,axis_key,i,heap)
+    if is_root:
+        neighbours = [(-h[0], h[1]) for h in heap] # dump the heap onto a list
+        neughbours = neighbours.reverse() # reverse it so that the closest insances are first
+        return neighbours
 
 if __name__=='__main__': 
 
@@ -283,7 +396,7 @@ if __name__=='__main__':
 	for comm_num in dict_nodes.keys():
 		#for comm_num in range(1,len(G_comm.nodes())):
 		set_nodes = dict_nodes[comm_num].split(' | ')
-		community_list.append(ComputeFeatures(set_nodes,df_filtered,'gene1','gene2','edge'))
+		community_list.append(compute_features(set_nodes,df_filtered,'gene1','gene2','edge'))
 	print('Feature extraction completed...')
 	x1 = community_list[1].distance(community_list[1])
 	x2 = community_list[1].distance(community_list[3])
@@ -292,7 +405,7 @@ if __name__=='__main__':
 	print("The first community has %s distance from the second one" %(x2))
 	print("The first community has %s distance from the second one" %(x3))
 	print("Generating a k-dim tree...")
-	kd_tree = MakeKdTree(community_list)
+	kd_tree,axis_key = make_kd_tree(community_list)
 	
 #	a = (1,1,1)
 #	b = (2,2,2)
