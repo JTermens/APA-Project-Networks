@@ -240,7 +240,7 @@ def get_axis_key(list_inst,list_attr = None):
 	if (list_attr == None): # create axis_key from scrach
 		axis_key = tuple(list_inst[0].__dict__.keys()) # get the keys of all possible attributes
 		if (len(list_inst) < 2**(len(axis_key))): # ensures N > 2^k, so the algorithm remains efficient
-			optimal_num_attr = int(np.log2(len(list_inst)))
+			optimal_num_attr = len(list_inst).bit_length()-1 # binary form of log2(len(list_inst))
 			axis_key = axis_key[:optimal_num_attr]
 	else: # creates axis_key from a non-empty list_attr and checks if the attributes are corrct
 		axis_key = list()
