@@ -28,7 +28,7 @@ example:
 
 ```$ python -m unittest test_euclidean_distance.py```
 
-## Steps
+## Objectives and followed steps
 
 ### 1. Obtain communities from the co-expression network
 This step consists of extracting communities from the co-expression network. !! Explain what happens when the number of communities is small etc
