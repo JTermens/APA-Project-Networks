@@ -18,9 +18,9 @@ Networkx
 Community
 ```
 
-### Tests
+### Tests and Profiling
 
-The Unittest library was used to test the performance and exception handling of the main implemented functions (euclidean_distance, distance and group). Following the standard specifications, there is one file per tested function and we have used the filename convention: 'test_<function_name>.py'. To see the result of these tests run:
+The Unittest library was used to test the performance and exception handling of the main implemented functions (`euclidean_distance`, `distance` and `group`). Following the standard specifications, there is one file per tested function and we have used the filename convention: `test_<function_name>.py`. To see the result of these tests run:
 
 ```$ python -m unittest test_<function_name>.py```
 
@@ -28,21 +28,24 @@ example:
 
 ```$ python -m unittest test_euclidean_distance.py```
 
+On the other hand, a profiling was done using cProfiler for the functions `make_kd_tree`, `get_nearest_neighbour`, and both implementations of k-neighbour search (`get_k_neighbours_heap` and `get_k_neighbours_eq`) benchmarking. Its implementation and results could be found at the [test folder](https://github.com/JTermens/APA-Project-Networks/blob/master/tests/). Furthermore, the functions found in the main code have been profiled too with cProfiler, results could be found at `main_profiling.txt`.
+
 ## Objectives and followed steps
 
 ### 1. Obtain communities from the co-expression network
 This step consists of extracting communities from the co-expression network. !! Explain what happens when the number of communities is small etc
 
 ### 2. Choose and compute ten features for each community
-After generating communities, we extracted 10 features for each of them. The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
+After generating communities, we extracted 10 features for each of them. The extracted features are: density, size, relative density, maximum betweenness centrality, average betweenness centrality, maximum degree centrality, average degree centrality, maximum load centrality, average load centrality and community modularity within the network.
 
 ### 3. Build a 'Community' class with features as attributes and a defined distance method
 We defined a community class that contains 10 attributes that correspond to the previously described features. Moreover, it contains a distance function that computes the distance from the current instance to another one based on the provided features and using the euclidean distance.  
 
-### 4. Define a Kd tree class and implement a function that builds it
+### 4. Define a tree class and implement a function that builds a k-d tree
+To fast neighbour search, we opted for implementing a k-d tree structure for which a class `Tree` is defined with attributes `node`, `left`, for the left subtree, and `right`, for the right one. K-d trees are created as instances of the `Tree` class and using the function `make_kd_tree`
 
 
-### 5. Implement a function that finds the k-nearest neighbours on the Kd tree with specified arguments
+### 5. Implement a function that finds the k-nearest neighbours search on the K-d tree
 
 
 
