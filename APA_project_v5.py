@@ -456,9 +456,9 @@ if __name__=='__main__':
     print("Generating a k-dim tree...")
     kd_tree,axis_key = make_kd_tree(community_list)
     
-    comm_pivot = Community(1,0,0,0,0,0,0,0,0,0)
+    comm_pivot = Community(1,10,0,0,0,0,0,0,0,0)
     dim = len(axis_key)
-    num_neighbours =10
+    num_neighbours =20
 
     nn = get_k_neighbours(comm_pivot,kd_tree,num_neighbours,dim,axis_key)
 
