@@ -1,0 +1,123 @@
+Prolifling with 1000000 points and 1000 neighbours
+
+ make_kd_tree
+         24670040 function calls (23621466 primitive calls) in 23.487 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.162    0.162   23.487   23.487 <string>:1(<module>)
+        1    0.000    0.000   23.325   23.325 kd_tree_test_profiling.py:134(make_kd_tree)
+  1000000    0.452    0.000    0.452    0.000 kd_tree_test_profiling.py:66(__init__)
+1048575/1    6.234    0.000   23.130   23.130 kd_tree_test_profiling.py:71(recursive_kd_tree)
+ 18475732    8.168    0.000    8.168    0.000 kd_tree_test_profiling.py:85(<lambda>)
+        1    0.110    0.110    0.194    0.194 kd_tree_test_profiling.py:94(get_axis_key)
+        1    0.000    0.000   23.487   23.487 {built-in method builtins.exec}
+  1000000    0.084    0.000    0.084    0.000 {built-in method builtins.isinstance}
+  2621440    0.299    0.000    0.299    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+   524287    7.977    0.000   16.145    0.000 {method 'sort' of 'list' objects}
+
+
+
+ get_nearest_neighbour
+         14000004 function calls (12000004 primitive calls) in 22.736 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   22.736   22.736 <string>:1(<module>)
+2000001/1    4.315    0.000   22.736   22.736 kd_tree_test_profiling.py:154(get_nearest_neighbour)
+  1000000    4.537    0.000   18.420    0.000 kd_tree_test_profiling.py:22(distance)
+  2000000    0.865    0.000    0.865    0.000 kd_tree_test_profiling.py:35(<lambda>)
+  1000000    0.580    0.000    1.445    0.000 {built-in method _functools.reduce}
+  2000000   11.736    0.000   11.736    0.000 {built-in method builtins.dir}
+        1    0.000    0.000   22.736   22.736 {built-in method builtins.exec}
+  1000000    0.124    0.000    0.124    0.000 {built-in method builtins.len}
+  1000000    0.167    0.000    0.167    0.000 {built-in method math.sqrt}
+  4000000    0.410    0.000    0.410    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
+
+ get_k_neighbours_heap
+         16003335 function calls (14003335 primitive calls) in 24.229 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   24.228   24.228 <string>:1(<module>)
+2000001/1    5.344    0.000   24.228   24.228 kd_tree_test_profiling.py:199(get_k_neighbours_heap)
+  1000000    4.543    0.000   18.618    0.000 kd_tree_test_profiling.py:22(distance)
+        1    0.000    0.000    0.000    0.000 kd_tree_test_profiling.py:256(<listcomp>)
+     1000    0.000    0.000    0.000    0.000 kd_tree_test_profiling.py:257(<lambda>)
+  2000000    0.899    0.000    0.899    0.000 kd_tree_test_profiling.py:35(<lambda>)
+  1000000    0.611    0.000    1.511    0.000 {built-in method _functools.reduce}
+     1329    0.002    0.000    0.002    0.000 {built-in method _heapq.heappushpop}
+     1000    0.001    0.000    0.001    0.000 {built-in method _heapq.heappush}
+  2000000   11.851    0.000   11.851    0.000 {built-in method builtins.dir}
+        1    0.000    0.000   24.229   24.229 {built-in method builtins.exec}
+  1000000    0.135    0.000    0.135    0.000 {built-in method builtins.isinstance}
+  2000000    0.256    0.000    0.256    0.000 {built-in method builtins.len}
+  1000000    0.167    0.000    0.167    0.000 {built-in method math.sqrt}
+  4000000    0.419    0.000    0.419    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+
+
+
+ get_k_neighbours_eq
+         16832833 function calls (14832833 primitive calls) in 23.513 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000   23.513   23.513 <string>:1(<module>)
+  1000000    4.507    0.000   18.426    0.000 kd_tree_test_profiling.py:22(distance)
+2000001/1    4.580    0.000   23.513   23.513 kd_tree_test_profiling.py:260(get_k_neighbours_eq)
+   500500    0.044    0.000    0.044    0.000 kd_tree_test_profiling.py:288(<lambda>)
+  1329000    0.114    0.000    0.114    0.000 kd_tree_test_profiling.py:291(<lambda>)
+  2000000    0.884    0.000    0.884    0.000 kd_tree_test_profiling.py:35(<lambda>)
+  1000000    0.590    0.000    1.473    0.000 {built-in method _functools.reduce}
+  2000000   11.732    0.000   11.732    0.000 {built-in method builtins.dir}
+        1    0.000    0.000   23.513   23.513 {built-in method builtins.exec}
+  2000000    0.263    0.000    0.263    0.000 {built-in method builtins.len}
+  1000000    0.166    0.000    0.166    0.000 {built-in method math.sqrt}
+  4001000    0.416    0.000    0.416    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     2329    0.218    0.000    0.375    0.000 {method 'sort' of 'list' objects}
+
+
+
+ Results:
+
+ Nearest Neighbour
+dist = 0.0011573843202103778; point =(0.0002445219471265414,0.0011312592461687476)
+
+ 1000 Nearest Neighbours with heap
+Display the first 10
+dist = 0.0011573843202103778; point =(0.0002445219471265414,0.0011312592461687476)
+dist = 0.0014520881127150975; point =(-0.0013560863659618505,0.0005192202376071986)
+dist = 0.00201933575106388; point =(-0.00042466987802880496,-0.0019741763776875976)
+dist = 0.0021601350121746164; point =(-0.0013171384835740652,-0.0017121125798004178)
+dist = 0.0023396061536752008; point =(-0.0021909070881345194,-0.0008207819963161889)
+dist = 0.002396739184064951; point =(-4.799477088346382e-05,0.00239625858754855)
+dist = 0.0025041811228518956; point =(-0.0005560180216964694,-0.002441673003413136)
+dist = 0.002583927875256808; point =(0.0007463432328818076,0.0024737936541394667)
+dist = 0.002816582970573458; point =(-0.002178236716133819,-0.0017856159829624518)
+dist = 0.0033565880100704026; point =(0.0004377797850003695,0.003327917055636065)
+
+ 1000 Nearest Neighbours without heap
+Display the first 10
+dist = 0.0011573843202103778; point =(0.0002445219471265414,0.0011312592461687476)
+dist = 0.0014520881127150975; point =(-0.0013560863659618505,0.0005192202376071986)
+dist = 0.00201933575106388; point =(-0.00042466987802880496,-0.0019741763776875976)
+dist = 0.0021601350121746164; point =(-0.0013171384835740652,-0.0017121125798004178)
+dist = 0.0023396061536752008; point =(-0.0021909070881345194,-0.0008207819963161889)
+dist = 0.002396739184064951; point =(-4.799477088346382e-05,0.00239625858754855)
+dist = 0.0025041811228518956; point =(-0.0005560180216964694,-0.002441673003413136)
+dist = 0.002583927875256808; point =(0.0007463432328818076,0.0024737936541394667)
+dist = 0.002816582970573458; point =(-0.002178236716133819,-0.0017856159829624518)
+dist = 0.0033565880100704026; point =(0.0004377797850003695,0.003327917055636065)
+
