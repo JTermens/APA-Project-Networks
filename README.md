@@ -2,6 +2,8 @@
 
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of network communities extracted from a co-expression network. 
 
+## Steps
+
 ### 1. Obtain communities from the co-expression network
 This step consists of extracting communities from the co-expression network. !! Explain what happens when the number of communities is small etc
 
