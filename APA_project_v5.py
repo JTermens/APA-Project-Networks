@@ -197,16 +197,33 @@ def compute_features(set_nodes,df_network,key1='node1',key2='node2',weight = Non
     centrality, (6) maximum degree centrality, (7) average degree centrality, (8) maximum load
     centrality, (9) average load centrality and (10) modularity.
     Input:  * set_nodes: iterable containing the community nodes
-        * df_network: network dataframe with a column for the source node (key1), a column for
-        the target node (key2) and an optional column for the edge weight. Has a row for each
-        edge.
-        * key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
-        'node2'.
-        * weight: key of the node weight in the dataframe. By default, None (unweighted graph)
+        	* df_network: network dataframe with a column for the source node (key1), a column for
+        	the target node (key2) and an optional column for the edge weight. Has a row for each
+        	edge.
+        	* key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
+        	'node2'.
+        	* weight: key of the node weight in the dataframe. By default, None (unweighted graph)
     Output: * comm: instance of the Community class containing the 10 specified features.
     '''
 
+    # Error check
+    if (len(set_nodes) == 0):
+        raise IndexError('set_nodes should not be empty')
+
+    if df_network.empty:
+        raise TypeError('df_network should not be empty')
+    if key1 not in df_network.keys():
+        raise KeyError('{} is not a key of df_network'.format(key1))
+    if key2 not in df_network.keys():
+        raise KeyError('{} is not a key of df_network'.format(key2))
+    if (weight is not None) and (weight not in df_network.keys()):
+        raise KeyError('{} is not a key of df_network'.format(key2))
+
     df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
+
+    if df_comm.empty:
+        raise TypeError('df_comm should not be empty, look at the elements of set_nodes')
+
     g_comm = nx.from_pandas_edgelist(df_comm,key1,key2,edge_attr = weight) # community graph
     g_network = nx.from_pandas_edgelist(df_network,key1,key2,edge_attr = weight) # network graph
 
@@ -250,12 +267,19 @@ def recursive_kd_tree(list_inst,axis_key,i=0):
     This function creates a K-d tree recursively from a list of instances (list_inst) and axis_key,
     a tuple containing the keys (as strings) of the class attributes that will be used as axis.
     Input:  *list_inst: a list of instances of a class
-        *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-        used as axis.
-        *i: axis number in which the list_inst is sorted and paritioned. By default, 0.
+            *axis_key: tuple containing the keys (as strings) of the class attributes that will be
+            used as axis.
+            *i: axis number in which the list_inst is sorted and paritioned. By default, 0.
     Output: *instance of Tree class where the node is the median point, left calls to create a left
-        subtree and right, a right one.
+            subtree and right, a right one.
     '''
+
+    # Error check
+    if (i < 0) or (i > (len(axis_key)-1)):
+        raise IndexError('i should be between 0 and {}'.format(len(axis_key)-1))
+    if not isinstance(i, int):
+        raise TypeError('i should be an integer')
+
     if len(list_inst) > 1:
         dim = len(axis_key)
         list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
@@ -283,18 +307,20 @@ def get_axis_key(list_inst,list_attr = None):
     Output: *axis_key: tuple containing the keys (as strings) of the class attributes that will be
             used as axis to make a k-d tree.
     '''
+    if(len(list_inst) == 0):
+        raise IndexError('list_inst should not be empty')
+
     # chek if all instances belong to the same class
     if(len(list_inst) > 0):
-        inst_class = list_inst[0].__class__ # class of the first instance
         for inst in list_inst:
             # if an instance isn't from the same class as the 1st one, raise an error
-            if(not isinstance(inst,inst_class)):
-                print("Error: Not all instances belong to the same class")
+            if(inst.__class__.__name__ != list_inst[0].__class__.__name__):
+                raise TypeError('instance {} do not belong to the same class as the first one'.format(inst))
 
     if (list_attr == None): # create axis_key from scrach
         axis_key = tuple(list_inst[0].__dict__.keys()) # get the keys of all possible attributes
         if (len(list_inst) < 2**(len(axis_key))): # ensures N > 2^k, so the algorithm remains efficient
-            optimal_num_attr = int(np.log2(len(list_inst)))
+            optimal_num_attr = len(list_inst).bit_length()-1 # binary form of log2(len(list_inst))
             axis_key = axis_key[:optimal_num_attr]
     else: # creates axis_key from a non-empty list_attr and checks if the attributes are corrct
         axis_key = list()
@@ -302,7 +328,7 @@ def get_axis_key(list_inst,list_attr = None):
             if (attr in tuple(list_inst[0].__dict__.keys())):
                 axis_key.append(attr)
             else:
-                print("%s is not an attribute of the instances given" %(attr))
+                raise AttributeError('{} is not an attribute of the given instances'.format(attr))
         axis_key = tuple(axis_key)
 
     return axis_key
@@ -341,11 +367,25 @@ def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
     Output: *best: tuple(minimum distance, closer instance).
     '''
 
+    # Error check
+
+    if not isinstance(dim, int):
+        raise TypeError('dim should be an integer')
+    if (len(axis_key) != dim):
+        raise IndexError('axis_key lenght and dim sould be equal')
+
+    if (i < 0) or (i > (len(axis_key)-1)):
+        raise IndexError('i should be between 0 and {}'.format(len(axis_key)-1))
+    if not isinstance(i, int):
+        raise TypeError('i should be an integer')
+
     if kd_tree is not None:
 
-        pivot_class = pivot.__class__
-        if not isinstance(kd_tree.node,pivot_class): #checks if pivot and node are from the same class
-            print("Error: the pivot and the elements of the k-d tree must be instances of the same class")
+        # Error check
+        if (pivot.__class__.__name__ != kd_tree.node.__class__.__name__):
+            raise TypeError('pivot and node tree {} should belong to the same class'.format(kd_tree.node))
+        if (axis_key[i] not in dir(pivot)):
+            raise AttributeError('{} is not an attribute of the class of the pivot'.format(axis_key[i]))
 
         # dist is the distance from the pivot to the root node of the actual kd-tree
         # dist_x is the distance from the kd-tree partition line and the pivot
@@ -375,7 +415,8 @@ def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
             get_nearest_neighbour(pivot,opp_branch,dim,dist_func,axis_key,i,best)
     return tuple(best)
 
-def get_k_neighbours(pivot,kd_tree,k,dim,axis_key,i=0,best_k=None):
+
+def get_k_neighbours(pivot,kd_tree,k,dim,axis_key,i=0,best_k = None):
 	'''
 	Function: get_k_neighbours
 	This function traverses a given kd-tree to find the k closest instances to the pivot. to do it
@@ -393,11 +434,32 @@ def get_k_neighbours(pivot,kd_tree,k,dim,axis_key,i=0,best_k=None):
 			closest instances and its distances to the pivot.
 	'''
 
+    # Error check
+
+	if (best_k is not None) and (len(best_k) > k):
+		raise IndexError('best_k should not have more than {} elements'.format(k))
+
+	if not isinstance(dim, int):
+		raise TypeError('dim should be an integer')
+	if (len(axis_key) != dim):
+		raise IndexError('axis_key lenght and dim sould be equal')
+
+	if (i < 0) or (i > (len(axis_key)-1)):
+		raise IndexError('i should be between 0 and {}'.format(len(axis_key)-1))
+	if not isinstance(i, int):
+		raise TypeError('i should be an integer')
+
 	is_root = not best_k
 	if is_root: # if there is no best_k, create one
 		best_k = []
 
 	if kd_tree is not None:
+		# Error check
+		if (pivot.__class__.__name__ != kd_tree.node.__class__.__name__):
+			raise TypeError('pivot and node tree {} should belong to the same class'.format(kd_tree.node))
+		if (axis_key[i] not in dir(pivot)):
+			raise AttributeError('{} is not an attribute of the class of the pivot'.format(axis_key[i]))
+
 		# dist is the distance from the pivot to the root node of the actual kd-tree
 		# dist_x is the distance from the kd-tree partition line and the pivot
 		dist = pivot.distance(kd_tree.node,*axis_key)
