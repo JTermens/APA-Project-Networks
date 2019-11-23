@@ -2,20 +2,20 @@
 
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of a network Community object extracted from a co-expression network. 
 
-## 1. Obtain communities from the co-expression network
+### 1. Obtain communities from the co-expression network
 This steps consists of extracting communities from our co-expression network. 
 <explain what happens when the number of communities is small etc>
 
-## 2. Choose and compute ten features for each community
+### 2. Choose and compute ten features for each community
 After generating communities, we extracted 10 features for each of them. The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
 
-## 3. Build a 'Community' class with features as attributes and a defined distance method
+### 3. Build a 'Community' class with features as attributes and a defined distance method
 We defined a community class that contains 10 attributes that correspond to the previously described features. Moreover, it contains a distance function that computes the distance from the current instance to another one based on the provided features and using the euclidean distance.  
 
-## 4. Define a Kd tree class and implement a function that builds it
+### 4. Define a Kd tree class and implement a function that builds it
 
 
-## 5. Implement a function that finds the k-nearest neighbours search on the Kd tree with specified arguments
+### 5. Implement a function that finds the k-nearest neighbours search on the Kd tree with specified arguments
 
 
 
