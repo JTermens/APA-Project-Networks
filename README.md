@@ -2,6 +2,29 @@
 
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of network communities extracted from a co-expression network. 
 
+## Getting Started
+!! Here we should say that the objects are in one file named 'X', the functions in the file named '', the main here. 
+
+
+### Prerequisites
+
+There are some Python 3 libraries that you will need to install before running our code. 
+We list them here:
+
+```
+Numpy
+Pandas
+Networkx
+Community
+```
+
+### Tests
+
+The Unittest library was used to test the performance and exception handling of the main implemented functions (euclidean_distance, distance and group). All of the are names 'test_<function_name>.py'. To see the result of these tests run:
+```$ python -m unittest test_<function_name>.py```
+example.-
+```$ python -m unittest test_euclidean_distance.py```
+
 ## Steps
 
 ### 1. Obtain communities from the co-expression network
@@ -19,25 +42,6 @@ We defined a community class that contains 10 attributes that correspond to the 
 ### 5. Implement a function that finds the k-nearest neighbours search on the Kd tree with specified arguments
 
 
-
-## Getting Started
-
-It is important to notice the network consists of nodes and edges. The nodes are represented by the genes while the edges are computed using liner correlation and represent correlation values. Notice that you can choose the threshold of the value of correlation when constructing the network. In the case you don't specify it differently, the threshold is set to 0.55.
-Here we give a figure representing the density distribution of the correlation values that might help you decide your threshold. Bear in mind that the lower the selected threshold the longer the time of execution of the program.
-
-[![INSERT YOUR GRAPHIC HERE](https://github.com/JTermens/APA-Project-Networks/blob/master/distribution.png)]()
-
-### Prerequisites
-
-There are some Python 3 libraries that you will need to install before running our code. 
-We list them here:
-
-```
-Numpy
-Pandas
-Networkx
-Community
-```
 
 ## Authors
 
