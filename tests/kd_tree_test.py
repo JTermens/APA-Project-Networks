@@ -240,7 +240,7 @@ def get_k_neighbours(pivot,kd_tree,k,dim,dist_func,axis_key,i=0,heap=None):
             get_k_neighbours(pivot,opp_branch,k,dim,dist_func,axis_key,i,heap)
     if is_root:
         neighbours = [(-h[0], h[1]) for h in heap] # dump the heap onto a list
-        neughbours = neighbours.reverse() # reverse it so that the closest insances are first
+        neighbours.reverse() # reverse it so that the closest insances are first
         return neighbours
 
 def display_kd_tree(kd_tree,i=0):
