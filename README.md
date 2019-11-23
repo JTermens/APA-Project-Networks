@@ -42,7 +42,7 @@ We defined a community class that contains 10 attributes that correspond to the 
 ### 4. Define a Kd tree class and implement a function that builds it
 
 
-### 5. Implement a function that finds the k-nearest neighbours search on the Kd tree with specified arguments
+### 5. Implement a function that finds the k-nearest neighbours on the Kd tree with specified arguments
 
 
 
