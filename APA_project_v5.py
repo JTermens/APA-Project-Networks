@@ -279,9 +279,9 @@ def get_axis_key(list_inst,list_attr = None):
         ensure efficiency (N > 2^k) and generates axis_key with the firsts ones (ordered
         alphabetically by the attribute key)
     Input:  *list_inst: list of instances of a certain class
-        *list_attr: list of attributes of the given instances, by default, None
+            *list_attr: list of attributes of the given instances, by default, None
     Output: *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-        used as axis to make a k-d tree.
+            used as axis to make a k-d tree.
     '''
     # chek if all instances belong to the same class
     if(len(list_inst) > 0):
@@ -315,7 +315,7 @@ def make_kd_tree(list_inst,list_attr = None):
     generate the axis_key that is a tuple containing the keys (as strings) of the class attributes
     that will be used as axis. Then, calls to RecursiveKdTree which recursively generates the tree
     Input:  *list_inst: a list of instances of a class
-        *list_attr: list of attributes of the given instances, by default, None
+            *list_attr: list of attributes of the given instances, by default, None
     Output: *kd_tree: k-dim binary tree, instance of class Tree
     '''
 
@@ -375,68 +375,61 @@ def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
             get_nearest_neighbour(pivot,opp_branch,dim,dist_func,axis_key,i,best)
     return tuple(best)
 
-def get_k_neighbours(pivot,kd_tree,k,dim,dist_func,axis_key,i=0,heap=None):
-    '''
-    Function: get_k_neighbours
-    This function traverses a given kd-tree to find the k closest instances to the pivot. Firstly
-    checks that the kd-tree's root node and the pivot are instances of the same class and then
-    recursively tranveses the kd-tree looking for the closest instances and saving it in a heap.
-    Input:  *pivot: instance for wich the function searches for the k nearest neighbours.
-            *kd_tree: a kd-tree of instances of the same class than pivot.
-            *k: desired number of neighbours
-            *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
-            *dist_func: distance function.
-            *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-            used as axis to make a k-d tree.
-            *axis number in which the compairsons are done. By default, 0.
-            *heap: max heap containing the k closest instances. By default, None.
-    Output: *neighbours: list of k tuples as (distance(node,pivot),node) which contains the k
-            closest instances and its distances to the pivot.
-    '''
-    import heapq
+def get_k_neighbours(pivot,kd_tree,k,dim,axis_key,i=0,best_k=None):
+	'''
+	Function: get_k_neighbours
+	This function traverses a given kd-tree to find the k closest instances to the pivot. to do it
+	recursively traverses the kd-tree looking for the closest instances and saving it in best_k.
+	Input:  *pivot: instance for wich the function searches for the k nearest neighbours.
+			*kd_tree: a kd-tree of instances of the same class than pivot.
+			*k: desired number of neighbours
+			*dim: dimension of axis_key, number of attributes considered to generate the kd-tree
+			*dist_func: distance function.
+			*axis_key: tuple containing the keys (as strings) of the class attributes that will be
+			used as axis to make a k-d tree.
+			*axis number in which the compairsons are done. By default, 0.
+			*best_k: list containing the k (or less) best elements. By default, None.
+	Output: *neighbours: list of k tuples as (distance(node,pivot),node) which contains the k
+			closest instances and its distances to the pivot.
+	'''
 
-    is_root = not heap
-    if is_root: # if there is no heap, create one
-        heap = []
+	is_root = not best_k
+	if is_root: # if there is no best_k, create one
+		best_k = []
 
-    if kd_tree is not None:
+	if kd_tree is not None:
+		# dist is the distance from the pivot to the root node of the actual kd-tree
+		# dist_x is the distance from the kd-tree partition line and the pivot
+		dist = pivot.distance(kd_tree.node,*axis_key)
+		dist_x = kd_tree.node.__getattribute__(axis_key[i]) - pivot.__getattribute__(axis_key[i])
 
-        pivot_class = pivot.__class__
-        if not isinstance(kd_tree.node,pivot_class): #checks if pivot and node are from the same class
-            print("Error: the pivot and the elements of the k-d tree must be instances of the same class")
+		if len(best_k) < k: # if best_k has less than k instances, add the actual one
+			best_k.append((dist, kd_tree.node))
+			best_k.sort(key= lambda x: x[0])
+		elif dist < best_k[k-1][0]: # if the actual instance is better than the worst in best_k
+			best_k[k-1] = (dist, kd_tree.node)
+			best_k.sort(key= lambda x: x[0])
 
-        # dist is the distance from the pivot to the root node of the actual kd-tree
-        # dist_x is the distance from the kd-tree partition line and the pivot
-        dist = dist_func(kd_tree.node,*axis_key)
-        dist_x = kd_tree.node.__getattribute__(axis_key[i]) - pivot.__getattribute__(axis_key[i])
+		if (dist_x < 0): # if dist_x < 0 <-> pivot is at the right side
+			next_branch = kd_tree.right
+			opp_branch = kd_tree.left
+		else: # if dist_x > 0 <-> pivot is at the left side
+			next_branch = kd_tree.left
+			opp_branch = kd_tree.right
 
-        if len(heap) < k: # if the heap has less than k instances, add the actual one
-            # distances in the heap are negative so that the farests instances will leave first
-            heapq.heappush(heap, (-dist, kd_tree.node)) # add to the heap
-        elif dist < -heap[0][0]: # if the actual instance is better than the worst in the heap
-            heapq.heappushpop(heap, (-dist, kd_tree.node)) # change the worst for the actual one
+		i = (i+1) % dim # next axis number
 
-        if (dist_x < 0): # if dist_x < 0 <-> pivot is at the right side
-            next_branch = kd_tree.right
-            opp_branch = kd_tree.left
-        else: # if dist_x > 0 <-> pivot is at the left side
-            next_branch = kd_tree.left
-            opp_branch = kd_tree.right
+		# follow searching at the actual side of the partition (branch)
+		get_k_neighbours(pivot,next_branch,k,dim,axis_key,i,best_k)
 
-        i = (i+1) % dim # next axis number
-
-        # follow searching at the actual side of the partition (branch)
-        get_k_neighbours(pivot,next_branch,k,dim,dist_func,axis_key,i,heap)
-
-        # if pivot is closer to the partition line than to the pivot there could be closer points
-        # at the other branch so the function looks for them
-        if (dist > np.absolute(dist_x)):
-            get_k_neighbours(pivot,opp_branch,k,dim,dist_func,axis_key,i,heap)
-    if is_root:
-        neighbours = [(-h[0], h[1]) for h in heap] # dump the heap onto a list
-        neighbours = neighbours.reverse() # reverse it so that the closest insances are first
-        return neighbours
-
+		# if pivot is closer to the partition line than to the pivot there could be closer points
+		# at the other branch so the function looks for them
+		if (dist > np.absolute(dist_x)):
+			get_k_neighbours(pivot,opp_branch,k,dim,axis_key,i,best_k)
+		if is_root:
+			return best_k
+        
+ 
 if __name__=='__main__':
 
     #df = pd.read_csv("4_coexpr_geo_v2.txt", sep="\t")
@@ -462,6 +455,16 @@ if __name__=='__main__':
     print("The first community has %s distance from the second one" %(x3))
     print("Generating a k-dim tree...")
     kd_tree,axis_key = make_kd_tree(community_list)
+    
+    comm_pivot = Community(1,0,0,0,0,0,0,0,0,0)
+    dim = len(axis_key)
+    num_neighbours =10
+
+    nn = get_k_neighbours(comm_pivot,kd_tree,num_neighbours,dim,axis_key)
+
+    print("\n {} Nearest Neighbours".format(num_neighbours))
+    for n in range(0,num_neighbours):
+        print("dist = {}; Community: dens = {}, size = {}, max btw = {}, ...)".format(nn[n][0],nn[n][1].dens,nn[n][1].size,nn[n][1].max_btw))
 
 #    a = (1,1,1)
 #    b = (2,2,2)
