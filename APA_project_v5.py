@@ -253,13 +253,15 @@ def compute_features(set_nodes,df_network,key1='node1',key2='node2',weight = Non
 
     return comm
 
-# Tree class, implements an object with 3 atributes: node is the value of the tree node, left is the left branch and right,
-# the right one
+# Tree class, implements an object with 4 atributes: node is the value of the tree node, left is the left branch, right,
+# the right one and axis_key is a tuple containing the keys of the attributes that are used as k-d tree's axis. It is set as
+# None in all nodes except for the root
 class Tree(object):
-    def __init__(self,node,left=None,right=None):
+    def __init__(self,node,left=None,right=None,axis_key=None):
         self.node = node
         self.left = left
         self.right = right
+	self.axis = axis_key
 
 def recursive_kd_tree(list_inst,axis_key,i=0):
     '''
@@ -347,8 +349,10 @@ def make_kd_tree(list_inst,list_attr = None):
 
     axis_key = get_axis_key(list_inst,list_attr)
     kd_tree = recursive_kd_tree(list_inst,axis_key)
+    
+    kd_tree.axis_key = axis_key
 
-    return kd_tree,axis_key
+    return kd_tree
 
 def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
     '''
@@ -516,13 +520,14 @@ if __name__=='__main__':
     print("The first community has %s distance from the second one" %(x2))
     print("The first community has %s distance from the second one" %(x3))
     print("Generating a k-dim tree...")
-    kd_tree,axis_key = make_kd_tree(community_list)
+    kd_tree = make_kd_tree(community_list)
+    print(kd_tree.axis_key)
     
     comm_pivot = Community(1,10,0,0,0,0,0,0,0,0)
-    dim = len(axis_key)
+    dim = len(kd_tree.axis_key)
     num_neighbours =20
 
-    nn = get_k_neighbours(comm_pivot,kd_tree,num_neighbours,dim,axis_key)
+    nn = get_k_neighbours(comm_pivot,kd_tree,num_neighbours,dim,kd_tree.axis_key)
 
     print("\n {} Nearest Neighbours".format(num_neighbours))
     for n in range(0,num_neighbours):
