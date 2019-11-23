@@ -3,8 +3,7 @@
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of a network Community object extracted from a co-expression network. 
 
 ### 1. Obtain communities from the co-expression network
-This steps consists of extracting communities from our co-expression network. 
-<explain what happens when the number of communities is small etc>
+This step consists of extracting communities from our co-expression network. !! Explain what happens when the number of communities is small etc
 
 ### 2. Choose and compute ten features for each community
 After generating communities, we extracted 10 features for each of them. The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
