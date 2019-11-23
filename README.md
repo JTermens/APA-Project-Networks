@@ -20,7 +20,7 @@ Community
 
 ### Tests
 
-The Unittest library was used to test the performance and exception handling of the main implemented functions (euclidean_distance, distance and group). All of the are names 'test_<function_name>.py'. To see the result of these tests run:
+The Unittest library was used to test the performance and exception handling of the main implemented functions (euclidean_distance, distance and group). Following the standard specifications, there is one file per tested function and we have used the filename convention: 'test_<function_name>.py'. To see the result of these tests run:
 ```$ python -m unittest test_<function_name>.py```
 example.-
 ```$ python -m unittest test_euclidean_distance.py```
