@@ -363,7 +363,6 @@ def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
     Input:  *pivot: instance for wich the function searches for the nearest neighbour.
             *kd_tree: a kd-tree of instances of the same class than pivot.
             *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
-            *dist_func: distance function.
             *axis_key: tuple containing the keys (as strings) of the class attributes that will be
             used as axis to make a k-d tree.
             *axis number in which the compairsons are done. By default, 0.
@@ -429,7 +428,6 @@ def get_k_neighbours(pivot,kd_tree,k,dim,axis_key,i=0,best_k = None):
 			*kd_tree: a kd-tree of instances of the same class than pivot.
 			*k: desired number of neighbours
 			*dim: dimension of axis_key, number of attributes considered to generate the kd-tree
-			*dist_func: distance function.
 			*axis_key: tuple containing the keys (as strings) of the class attributes that will be
 			used as axis to make a k-d tree.
 			*axis number in which the compairsons are done. By default, 0.
