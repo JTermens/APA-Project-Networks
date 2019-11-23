@@ -42,11 +42,11 @@ After generating communities, we extracted 10 features for each of them. The ext
 We defined a community class that contains 10 attributes that correspond to the previously described features. Moreover, it contains a distance function that computes the distance from the current instance to another one based on the provided features and using the euclidean distance.  
 
 ### 4. Define a tree class and implement a function that builds a k-d tree
-To fast neighbour search, we opted for implementing a k-d tree structure for which a class `Tree` is defined with attributes `node`, `left`, for the left subtree, and `right`, for the right one. K-d trees are created as instances of the `Tree` class and using the function `make_kd_tree`
+To fast neighbour search, we opted for implementing a k-d tree structure for which a class `Tree` is defined with attributes `node`, `left`, for the left subtree,`right`, for the right one and `axis_key`, which is a tuple containing the keys (as strings) of the class (`Community` in this case) attributes that have been used as axis to make a k-d tree. K-d trees are created as instances of the `Tree` class and using the function `make_kd_tree`. This function firstly generates `axis_key` from the given arguments or, by defauly, computes the optimal number of attributes to ensure efficiency (N > 2^k) and generates `axis_key` with the first ones. Then, recursively generates the k-d tree by successively splitting the given group of instances according to the different axis.
 
 
-### 5. Implement a function that finds the k-nearest neighbours search on the K-d tree
-
+### 5. Implement a function that finds the k-nearest neighbours on the K-d tree
+The function `get_k_neighbours` traverses a given kd-tree to find the k closest instances to the given one (called `pivot`). To do it, it successively traverses the kd-tree branckes looking for the closest instances and saving it the list `best_k`. This list contains tuples of the form (distance(pivot, instance), instance)
 
 
 ## Authors
