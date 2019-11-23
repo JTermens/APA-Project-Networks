@@ -20,32 +20,32 @@ from math import sqrt
 from functools import reduce
 
 def filtered(filename,threshold = 0.55):
-	'''
-	Function: filtered
-	This function generates a data frame from a given file (filename) and filters it removing the
-	edges with a weight lower than a given threshold.
+    '''
+    Function: filtered
+    This function generates a data frame from a given file (filename) and filters it removing the
+    edges with a weight lower than a given threshold.
 
-	Input:  * filename: a tab separated file containing 3 columns (source node, target node and
-			weight) and a row for each edge
-			* threshold: minimum weight that an edge has to have ho not being filtered.
-	Output: * df_filtered: filtered dataframe, has 3 columns, keyed 'gene1', 'gene2' and 'edge' and
-	a row for each edge.
-	'''
-	df = pd.read_csv(filename, sep="\t")
-	df_filtered=df.loc[ (df['edge'] > threshold) & (df['gene1'] != df['gene2']) ]
-	return df_filtered
+    Input:  * filename: a tab separated file containing 3 columns (source node, target node and
+            weight) and a row for each edge
+            * threshold: minimum weight that an edge has to have ho not being filtered.
+    Output: * df_filtered: filtered dataframe, has 3 columns, keyed 'gene1', 'gene2' and 'edge' and
+    a row for each edge.
+    '''
+    df = pd.read_csv(filename, sep="\t")
+    df_filtered=df.loc[ (df['edge'] > threshold) & (df['gene1'] != df['gene2']) ]
+    return df_filtered
 
 def network(df):
-	'''
-	Function: network
-	This function creates a grap, G, from a dataframe, df, using NetworkX library.
+    '''
+    Function: network
+    This function creates a grap, G, from a dataframe, df, using NetworkX library.
 
-	Input:  * df: dataframe with 3 columns, keyed 'gene1', 'gene2' and 'edge' and a row for each
-			edge.
-	Output: * G: Network graph
-	'''
-	G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2')
-	return G
+    Input:  * df: dataframe with 3 columns, keyed 'gene1', 'gene2' and 'edge' and a row for each
+            edge.
+    Output: * G: Network graph
+    '''
+    G=nx.from_pandas_edgelist(df_filtered, 'gene1', 'gene2')
+    return G
 
 def louvain(G):
     '''
@@ -120,201 +120,209 @@ def normalize_list(list_normal):
     return list_normal
 
 def euclidean_distance(a,b):
-	'''Returns euclidean distance for vector of dimension n>=2'''
-	if(len(a) != len(b)):
-		return "error"
-	else:
-		dim = len(a)
-		return sqrt(reduce(lambda i,j: i + ((a[j] - b[j]) ** 2), range(dim), 0))
+    '''Returns euclidean distance for vector of dimension n>=2'''
+    if(len(a) != len(b)):
+        return "error"
+    else:
+        dim = len(a)
+        return sqrt(reduce(lambda i,j: i + ((a[j] - b[j]) ** 2), range(dim), 0))
 
 # Community class, each comunity (parition) found with Louvain algorithm is characterized by 10
 # features and stored as an instance of this class.
 class Community(object):
-	def __init__(self,dens,size,rel_dens,max_btw,avg_btw,max_centr,avg_centr,max_load,avg_load,mod):
-		self.dens = dens
-		self.size = size
-		self.rel_dens = rel_dens
-		self.max_btw = max_btw
-		self.avg_btw = avg_btw
-		self.max_centr = max_centr
-		self.avg_centr = avg_centr
-		self.max_load = max_load
-		self.avg_load = avg_load
-		self.mod = mod
+    def __init__(self,dens,size,rel_dens,max_btw,avg_btw,max_centr,avg_centr,max_load,avg_load,mod):
+        self.dens = dens
+        self.size = size
+        self.rel_dens = rel_dens
+        self.max_btw = max_btw
+        self.avg_btw = avg_btw
+        self.max_centr = max_centr
+        self.avg_centr = avg_centr
+        self.max_load = max_load
+        self.avg_load = avg_load
+        self.mod = mod
+
+    def get_features(self):
+        feat_list = list()
+        for feat in list(self.__dict__.keys()):
+            feat_list.append(self.__getattribute__(feat))
+            
+        return (feat_list)
 
 
 
-	def distance(self,other,*argv):
-		'''Returns the distance between the current community and other instance of
-		the class using the attributes specified in argv. If no arg is provided,
-		it uses all the attributes'''
-		if (len(argv) == 0):
-			f1 = [self.dens,self.size,self.rel_dens,self.max_btw, self.avg_btw, self.max_centr, self.avg_centr, self.max_load, self.avg_load, self.mod]
-			f2 = [self.dens,self.size,self.rel_dens,self.max_btw, self.avg_btw, self.max_centr, self.avg_centr, self.max_load, self.avg_load, self.mod]
-			features1 = tuple(normalize_list(f1))
-			features2 = tuple(normalize_list(f2))
-
-			return (euclidean_distance(features1,features2))
-		elif (len(argv) == 1):
-			#print('it has only 1 attribute ----------------------------')
-			#print('this is argv', argv[0])
-			features1 = list()
-			features2 = list()
-			if(argv[0] in dir(self)):
-				features1.append(self.__getattribute__(argv[0]))
-				features2.append(other.__getattribute__(argv[0]))
-				return (euclidean_distance(features1,features2))
-			else:
-				print("%s is not an attribute of the communities" %(argv[0]))
-		else:
-			#print('im here')
-			features1 = list()
-			features2 = list()
-			for arg in argv:
-				if(arg in dir(self)):
-					features1.append(self.__getattribute__(arg))
-					features2.append(other.__getattribute__(arg))
-				else:
-					print("%s is not an attribute of the communities" %(arg))
-			features1 = tuple(normalize_list(features1))
-			features2 = tuple(normalize_list(features2))
-			return (euclidean_distance(features1,features2))
+    def distance(self,other,*argv):
+        '''Returns the distance between the current community and other instance of
+        the class using the attributes specified in argv. If no arg is provided,
+        it uses all the attributes'''
+        if(other.__class__.__name__ != 'Community'):
+            raise TypeError("The first argument must be an instance of the Community class")
+        if (len(argv) == 0):
+            features1 = self.get_features()
+            features2 = other.get_features()
+            features1 = tuple(normalize_list(features1))
+            features2 = tuple(normalize_list(features2))
+            return (euclidean_distance(features1,features2))
+        
+        elif (len(argv) == 1):
+            #print('it has only 1 attribute ----------------------------')
+            #print('this is argv', argv[0])
+            features1 = list()
+            features2 = list()
+            if(argv[0] in dir(self)):
+                features1.append(self.__getattribute__(argv[0]))
+                features2.append(other.__getattribute__(argv[0]))
+                return (euclidean_distance(features1,features2))
+            else:
+                raise AttributeError("%s is not an attribute of the community class" %(argv[0]))
+        else:
+            features1 = list()
+            features2 = list()
+            for arg in argv:
+                if(arg in dir(self)):
+                    features1.append(self.__getattribute__(arg))
+                    features2.append(other.__getattribute__(arg))
+                else:
+                    raise AttributeError("%s is not an attribute of the community class" %(arg))
+            features1 = tuple(normalize_list(features1))
+            features2 = tuple(normalize_list(features2))
+            return (euclidean_distance(features1,features2))
 
 
 def compute_features(set_nodes,df_network,key1='node1',key2='node2',weight = None):
-	'''
-	Function: compute_features
-	This function computes the following features of a given community in a graph: (1) density,
-	(2) size, (3) relative density,  (4) maximum betweenness centrality,  (5) average betweenness
-	centrality, (6) maximum degree centrality, (7) average degree centrality, (8) maximum load
-	centrality, (9) average load centrality and (10) modularity.
-	Input:  * set_nodes: iterable containing the community nodes
-		* df_network: network dataframe with a column for the source node (key1), a column for
-		the target node (key2) and an optional column for the edge weight. Has a row for each
-		edge.
-		* key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
-		'node2'.
-		* weight: key of the node weight in the dataframe. By default, None (unweighted graph)
-	Output: * comm: instance of the Community class containing the 10 specified features.
-	'''
+    '''
+    Function: compute_features
+    This function computes the following features of a given community in a graph: (1) density,
+    (2) size, (3) relative density,  (4) maximum betweenness centrality,  (5) average betweenness
+    centrality, (6) maximum degree centrality, (7) average degree centrality, (8) maximum load
+    centrality, (9) average load centrality and (10) modularity.
+    Input:  * set_nodes: iterable containing the community nodes
+        * df_network: network dataframe with a column for the source node (key1), a column for
+        the target node (key2) and an optional column for the edge weight. Has a row for each
+        edge.
+        * key1 and key2: dataframe source and targe node column keys, by default; 'node1' and
+        'node2'.
+        * weight: key of the node weight in the dataframe. By default, None (unweighted graph)
+    Output: * comm: instance of the Community class containing the 10 specified features.
+    '''
 
-	df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
-	g_comm = nx.from_pandas_edgelist(df_comm,key1,key2,edge_attr = weight) # community graph
-	g_network = nx.from_pandas_edgelist(df_network,key1,key2,edge_attr = weight) # network graph
+    df_comm = df_network[(df_network[key1].isin(set_nodes)) & (df_network[key2].isin(set_nodes))] # community data frame
+    g_comm = nx.from_pandas_edgelist(df_comm,key1,key2,edge_attr = weight) # community graph
+    g_network = nx.from_pandas_edgelist(df_network,key1,key2,edge_attr = weight) # network graph
 
-	dict_comm = {node:0 if node in set_nodes else 1 for node in g_network.nodes()} # necessary to calculate the modularity
+    dict_comm = {node:0 if node in set_nodes else 1 for node in g_network.nodes()} # necessary to calculate the modularity
 
-	# Features:
+    # Features:
 
-	dens = nx.density(g_comm) # 1. density
-	size = len(set_nodes) # 2. size
-	rel_dens = dens/size # 3. relative density
+    dens = nx.density(g_comm) # 1. density
+    size = len(set_nodes) # 2. size
+    rel_dens = dens/size # 3. relative density
 
-	btw_centr = nx.betweenness_centrality(g_comm, normalized=True, weight=weight) # dict with nodes' betweenness centrality
-	max_btw = max(btw_centr.values()) # 4. max betweenness centrality
-	avg_btw = sum(btw_centr.values())/size # 5. average betweenness centrality
+    btw_centr = nx.betweenness_centrality(g_comm, normalized=True, weight=weight) # dict with nodes' betweenness centrality
+    max_btw = max(btw_centr.values()) # 4. max betweenness centrality
+    avg_btw = sum(btw_centr.values())/size # 5. average betweenness centrality
 
-	degree_centr = nx.degree_centrality(g_comm) # dict with nodes' degree centrality
-	max_centr = max(degree_centr.values()) # 6. max degree centrality
-	avg_centr = sum(degree_centr.values())/size # 7. average degree centrality
+    degree_centr = nx.degree_centrality(g_comm) # dict with nodes' degree centrality
+    max_centr = max(degree_centr.values()) # 6. max degree centrality
+    avg_centr = sum(degree_centr.values())/size # 7. average degree centrality
 
-	load_centr = nx.load_centrality(g_comm, normalized=True, weight=weight) # dict with nodes' load centrality
-	max_load = max(load_centr.values()) # 8. max load centrality
-	avg_load = sum(load_centr.values())/size # 9. average load centrality
+    load_centr = nx.load_centrality(g_comm, normalized=True, weight=weight) # dict with nodes' load centrality
+    max_load = max(load_centr.values()) # 8. max load centrality
+    avg_load = sum(load_centr.values())/size # 9. average load centrality
 
-	mod = community.modularity(dict_comm,g_network) # 10. community modularity within the network
+    mod = community.modularity(dict_comm,g_network) # 10. community modularity within the network
 
-	comm = Community(dens,size,rel_dens,max_btw,avg_btw,max_centr,avg_centr,max_load,avg_load,mod)
+    comm = Community(dens,size,rel_dens,max_btw,avg_btw,max_centr,avg_centr,max_load,avg_load,mod)
 
-	return comm
+    return comm
 
 # Tree class, implements an object with 3 atributes: node is the value of the tree node, left is the left branch and right,
 # the right one
 class Tree(object):
-	def __init__(self,node,left=None,right=None):
-		self.node = node
-		self.left = left
-		self.right = right
+    def __init__(self,node,left=None,right=None):
+        self.node = node
+        self.left = left
+        self.right = right
 
 def recursive_kd_tree(list_inst,axis_key,i=0):
-	'''
-	Function: recursive_kd_tree
-	This function creates a K-d tree recursively from a list of instances (list_inst) and axis_key,
-	a tuple containing the keys (as strings) of the class attributes that will be used as axis.
-	Input:  *list_inst: a list of instances of a class
-		*axis_key: tuple containing the keys (as strings) of the class attributes that will be
-		used as axis.
-		*i: axis number in which the list_inst is sorted and paritioned. By default, 0.
-	Output: *instance of Tree class where the node is the median point, left calls to create a left
-		subtree and right, a right one.
-	'''
-	if len(list_inst) > 1:
-		dim = len(axis_key)
-		list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
-		i = (i + 1) % dim
-		half = len(list_inst) >>1 # just division by 2 moving the bits
+    '''
+    Function: recursive_kd_tree
+    This function creates a K-d tree recursively from a list of instances (list_inst) and axis_key,
+    a tuple containing the keys (as strings) of the class attributes that will be used as axis.
+    Input:  *list_inst: a list of instances of a class
+        *axis_key: tuple containing the keys (as strings) of the class attributes that will be
+        used as axis.
+        *i: axis number in which the list_inst is sorted and paritioned. By default, 0.
+    Output: *instance of Tree class where the node is the median point, left calls to create a left
+        subtree and right, a right one.
+    '''
+    if len(list_inst) > 1:
+        dim = len(axis_key)
+        list_inst.sort(key=lambda x: x.__getattribute__(axis_key[i])) # pyhton list.sort has complexity O(nlog(n))
+        i = (i + 1) % dim
+        half = len(list_inst) >>1 # just division by 2 moving the bits
 
-		return Tree(list_inst[half], recursive_kd_tree(list_inst[:half],axis_key,i),recursive_kd_tree(list_inst[half+1:],axis_key,i))
+        return Tree(list_inst[half], recursive_kd_tree(list_inst[:half],axis_key,i),recursive_kd_tree(list_inst[half+1:],axis_key,i))
 
-	elif len(list_inst) == 1:
-		return Tree(list_inst[0])
+    elif len(list_inst) == 1:
+        return Tree(list_inst[0])
 
 def get_axis_key(list_inst,list_attr = None):
-	'''
-	Function: get_axis_key
-	This function checks if the given instances are from the same class and creates axis_key, a
-	tuple containing the keys (as strings) of the class attributes that will be used as axis.
-	This could be done by two ways:
-		*If the user gives a list of attributes as list_attr, it will check if they are attributes
-		of the given instances and create axis_key from it.
-		*By default: list_attr = None; the function computes the optimal number of attributes to
-		ensure efficiency (N > 2^k) and generates axis_key with the firsts ones (ordered
-		alphabetically by the attribute key)
-	Input:  *list_inst: list of instances of a certain class
-		*list_attr: list of attributes of the given instances, by default, None
-	Output: *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-		used as axis to make a k-d tree.
-	'''
-	# chek if all instances belong to the same class
-	if(len(list_inst) > 0):
-		inst_class = list_inst[0].__class__ # class of the first instance
-		for inst in list_inst:
-			# if an instance isn't from the same class as the 1st one, raise an error
-			if(not isinstance(inst,inst_class)):
-				print("Error: Not all instances belong to the same class")
+    '''
+    Function: get_axis_key
+    This function checks if the given instances are from the same class and creates axis_key, a
+    tuple containing the keys (as strings) of the class attributes that will be used as axis.
+    This could be done by two ways:
+        *If the user gives a list of attributes as list_attr, it will check if they are attributes
+        of the given instances and create axis_key from it.
+        *By default: list_attr = None; the function computes the optimal number of attributes to
+        ensure efficiency (N > 2^k) and generates axis_key with the firsts ones (ordered
+        alphabetically by the attribute key)
+    Input:  *list_inst: list of instances of a certain class
+        *list_attr: list of attributes of the given instances, by default, None
+    Output: *axis_key: tuple containing the keys (as strings) of the class attributes that will be
+        used as axis to make a k-d tree.
+    '''
+    # chek if all instances belong to the same class
+    if(len(list_inst) > 0):
+        inst_class = list_inst[0].__class__ # class of the first instance
+        for inst in list_inst:
+            # if an instance isn't from the same class as the 1st one, raise an error
+            if(not isinstance(inst,inst_class)):
+                print("Error: Not all instances belong to the same class")
 
-	if (list_attr == None): # create axis_key from scrach
-		axis_key = tuple(list_inst[0].__dict__.keys()) # get the keys of all possible attributes
-		if (len(list_inst) < 2**(len(axis_key))): # ensures N > 2^k, so the algorithm remains efficient
-			optimal_num_attr = int(np.log2(len(list_inst)))
-			axis_key = axis_key[:optimal_num_attr]
-	else: # creates axis_key from a non-empty list_attr and checks if the attributes are corrct
-		axis_key = list()
-		for attr in list_attr:
-			if (attr in tuple(list_inst[0].__dict__.keys())):
-				axis_key.append(attr)
-			else:
-				print("%s is not an attribute of the instances given" %(attr))
-		axis_key = tuple(axis_key)
+    if (list_attr == None): # create axis_key from scrach
+        axis_key = tuple(list_inst[0].__dict__.keys()) # get the keys of all possible attributes
+        if (len(list_inst) < 2**(len(axis_key))): # ensures N > 2^k, so the algorithm remains efficient
+            optimal_num_attr = int(np.log2(len(list_inst)))
+            axis_key = axis_key[:optimal_num_attr]
+    else: # creates axis_key from a non-empty list_attr and checks if the attributes are corrct
+        axis_key = list()
+        for attr in list_attr:
+            if (attr in tuple(list_inst[0].__dict__.keys())):
+                axis_key.append(attr)
+            else:
+                print("%s is not an attribute of the instances given" %(attr))
+        axis_key = tuple(axis_key)
 
-	return axis_key
+    return axis_key
 
 def make_kd_tree(list_inst,list_attr = None):
-	'''
-	Function: make_kd_tree
-	This function recursively takes a list of instances and a list of attributes and generates a
-	k-dim tree using the specified features as the different axis. Firstly calls to GetKeyAxis to
-	generate the axis_key that is a tuple containing the keys (as strings) of the class attributes
-	that will be used as axis. Then, calls to RecursiveKdTree which recursively generates the tree
-	Input:  *list_inst: a list of instances of a class
-		*list_attr: list of attributes of the given instances, by default, None
-	Output: *kd_tree: k-dim binary tree, instance of class Tree
-	'''
+    '''
+    Function: make_kd_tree
+    This function recursively takes a list of instances and a list of attributes and generates a
+    k-dim tree using the specified features as the different axis. Firstly calls to GetKeyAxis to
+    generate the axis_key that is a tuple containing the keys (as strings) of the class attributes
+    that will be used as axis. Then, calls to RecursiveKdTree which recursively generates the tree
+    Input:  *list_inst: a list of instances of a class
+        *list_attr: list of attributes of the given instances, by default, None
+    Output: *kd_tree: k-dim binary tree, instance of class Tree
+    '''
 
-	axis_key = get_axis_key(list_inst,list_attr)
-	kd_tree = recursive_kd_tree(list_inst,axis_key)
+    axis_key = get_axis_key(list_inst,list_attr)
+    kd_tree = recursive_kd_tree(list_inst,axis_key)
 
-	return kd_tree,axis_key
+    return kd_tree,axis_key
 
 def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
     '''
@@ -327,7 +335,7 @@ def get_nearest_neighbour(pivot,kd_tree,dim,dist_func,axis_key,i=0,best=None):
             *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
             *dist_func: distance function.
             *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-        	used as axis to make a k-d tree.
+            used as axis to make a k-d tree.
             *axis number in which the compairsons are done. By default, 0.
             *best: [minimum distance, closer instance].
     Output: *best: tuple(minimum distance, closer instance).
@@ -379,7 +387,7 @@ def get_k_neighbours(pivot,kd_tree,k,dim,dist_func,axis_key,i=0,heap=None):
             *dim: dimension of axis_key, number of attributes considered to generate the kd-tree
             *dist_func: distance function.
             *axis_key: tuple containing the keys (as strings) of the class attributes that will be
-        	used as axis to make a k-d tree.
+            used as axis to make a k-d tree.
             *axis number in which the compairsons are done. By default, 0.
             *heap: max heap containing the k closest instances. By default, None.
     Output: *neighbours: list of k tuples as (distance(node,pivot),node) which contains the k
@@ -426,36 +434,36 @@ def get_k_neighbours(pivot,kd_tree,k,dim,dist_func,axis_key,i=0,heap=None):
             get_k_neighbours(pivot,opp_branch,k,dim,dist_func,axis_key,i,heap)
     if is_root:
         neighbours = [(-h[0], h[1]) for h in heap] # dump the heap onto a list
-        neughbours = neighbours.reverse() # reverse it so that the closest insances are first
+        neighbours = neighbours.reverse() # reverse it so that the closest insances are first
         return neighbours
 
 if __name__=='__main__':
 
-	#df = pd.read_csv("4_coexpr_geo_v2.txt", sep="\t")
-	df_filtered = filtered("4_coexpr_geo_v2.txt")
-	print('Building network...')
-	network = network(df_filtered)
-	print('Community detection in course...')
-	dict_nodes = louvain(network)
-	print('Extracting features...')
-	community_list = []
-	for comm_num in dict_nodes.keys():
-		#for comm_num in range(1,len(G_comm.nodes())):
-		set_nodes = dict_nodes[comm_num]
-		#set_nodes = dict_nodes[comm_num].split(' | ')
-		community_list.append(compute_features(set_nodes,df_filtered,'gene1','gene2','edge'))
-	#print(community_list[1])
-	print('Feature extraction completed...')
-	x1 = community_list[1].distance(community_list[1])
-	x2 = community_list[1].distance(community_list[3])
-	x3 = community_list[1].distance(community_list[2],"size")
-	print("The first community has %s distance from itself" %(x1))
-	print("The first community has %s distance from the second one" %(x2))
-	print("The first community has %s distance from the second one" %(x3))
-	print("Generating a k-dim tree...")
-	kd_tree,axis_key = make_kd_tree(community_list)
+    #df = pd.read_csv("4_coexpr_geo_v2.txt", sep="\t")
+    df_filtered = filtered("4_coexpr_geo_v2.txt")
+    print('Building network...')
+    network = network(df_filtered)
+    print('Community detection in course...')
+    dict_nodes = louvain(network)
+    print('Extracting features...')
+    community_list = []
+    for comm_num in dict_nodes.keys():
+        #for comm_num in range(1,len(G_comm.nodes())):
+        set_nodes = dict_nodes[comm_num]
+        #set_nodes = dict_nodes[comm_num].split(' | ')
+        community_list.append(compute_features(set_nodes,df_filtered,'gene1','gene2','edge'))
+    #print(community_list[1])
+    print('Feature extraction completed...')
+    x1 = community_list[1].distance(community_list[1])
+    x2 = community_list[1].distance(community_list[3])
+    x3 = community_list[1].distance(community_list[2],"size")
+    print("The first community has %s distance from itself" %(x1))
+    print("The first community has %s distance from the second one" %(x2))
+    print("The first community has %s distance from the second one" %(x3))
+    print("Generating a k-dim tree...")
+    kd_tree,axis_key = make_kd_tree(community_list)
 
-#	a = (1,1,1)
-#	b = (2,2,2)
-#	x = euclidean_distance(a,b)
-#	print(x)
+#    a = (1,1,1)
+#    b = (2,2,2)
+#    x = euclidean_distance(a,b)
+#    print(x)
