@@ -23,9 +23,6 @@ Networkx
 Community
 ```
 
-### Future improvements
-In the future, we intend to add to the Community class the automatic computation of the features.
-
 
 ## Authors
 
