@@ -14,7 +14,7 @@ Here we give a figure representing the density distribution of the correlation v
 ## Getting Started
 The code is divided in 3 sections: the main program, a library and a collection of tests. The main script is the file `main.py`; it executes the implemented functions and structures to perform a k-nearest neighbour search based on the co-expression matrix. It uses the library `networktools.py`, that contains the collection of classes and functions developed during the project (i.e. function to build a K-d tree, the Community instance with the distance function, and the Tree instance with its group function). Take a look at the tests and profiling section below to get more information about the tests. 
 
-!! mention also the coverage folder that will be generated for the tests!!!
+Also, the `htmlcov` folder for each test is generated. The particular coverage result of the tests can be found in the respective folders.
 
 ### Prerequisites
 
