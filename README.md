@@ -12,9 +12,11 @@ Here we give a figure representing the density distribution of the correlation v
 
 
 ## Getting Started
+The code is divided in 3 sections: the main program, a library and a collection of tests. The main script is the file `main.py`; it executes the implemented functions and structures to perform a k-nearest neighbour search based on the co-expression matrix. It uses the library `networktools.py`, that contains the collection of classes and functions developed during the project (i.e. function to build a K-d tree, the Community instance with the distance function, and the Tree instance with its group function). Take a look at the tests and profiling section below to get more information about the tests. 
 !! Here we should say that the objects are in one file named 'X', the functions in the file named '', the main here. 
 
 !! mention also the coverage folder that will be generated for the tests!!!
+
 ### Prerequisites
 
 There are some Python 3 libraries that you will need to install before running our code. 
@@ -65,6 +67,7 @@ To fast neighbour search, we opted for implementing a k-d tree structure for whi
 The function `get_k_neighbours` traverses a given kd-tree to find the k closest instances to the given one (called `pivot`). To do it, it successively traverses the kd-tree branckes looking for the closest instances and saving it the list `best_k`. This list contains tuples of the form (distance(pivot, instance), instance) sorted from the minimal to the maximal distance. This implementation using lists has been chosen, instead of the implementation using heaps, due to being able to compare equal distances and for being faster. Both implementations where benchamarked using one million 2-dim random points generated in the unit circle and looking for the thousand closest point to the origin. Its profiling showed that the list implementation was nearly 0.7 seconds faster than the heap one (23.513 and 24.229 seconds, respectively).
 
 ## Limitations
+
 ---------------rewrite, this is a template, mention optimality and k features------
 The current version of Code Maat processes all its content in memory. Thus, it may not scale to large input files (however, it depends a lot on the combination of parser and analysis). The recommendation is to limit the input by specifying a sensible start date (as discussed initially, you want to do that anyway to avoid confounds in the analysis).
 
@@ -74,14 +77,6 @@ The current version of Code Maat processes all its content in memory. Thus, it m
 * **Joan Termens** 
 * **Beatriz Urda** 
 
-
-
-# WHAT  WE HAD BEFORE
-
-## Community detection in co-expression networks
-
-Program that from the selected file contructs a network and detects present communities by applying Louvain's algorithm of community detection. Also, it extracts some main features of each community and computes the distance between them.
-The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
 
 
 
