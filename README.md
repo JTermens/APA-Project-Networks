@@ -1,4 +1,4 @@
-# k-nearest Neighbour search of network communities in their K-d tree representation
+# K-nearest neighbour search of network communities in their K-d tree representation
 
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of network communities extracted from a co-expression network. 
 
@@ -33,7 +33,11 @@ On the other hand, a profiling was done using cProfiler for the functions `make_
 ## Objectives and followed steps
 
 ### 1. Obtain communities from the co-expression network
-This step consists of extracting communities from the co-expression network. !! Explain what happens when the number of communities is small etc
+This step consists of extracting communities from the co-expression network. In order to extract the communities from a given file, the algorithm calls the function `choose_detection_method(filename,k)` where the argument `filename` specifies the file from which the communities need to be extracted and the argument `k` controls the number of features the user wants to perform the k-neigbour search. 
+
+In the case the user plans to perform the k-neighbour search by considering more than 8  features of the communities (i.e. the arguement `k` of the function is larger than 8), the algorithm calls the function `community_binning(filename)` that will randomly select 2000 communities from the desired file. 
+
+However if the user wants to perform the k-neighbour search by considering 8 or less features of the communities (i.e. the arguement `k` of the function is smaller or equal to 8), the communities are found by filtering the chosen file with the `filtered` function , building the newtwork with the `network` function and finally, the communities are computed by using the `louvain(G)` function that implements the standard Louvain algorithm of community detection.
 
 ### 2. Choose and compute ten features for each community
 After generating communities, we extracted 10 features for each of them. The extracted features are: density, size, relative density, maximum betweenness centrality, average betweenness centrality, maximum degree centrality, average degree centrality, maximum load centrality, average load centrality and community modularity within the network.
