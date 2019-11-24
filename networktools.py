@@ -314,6 +314,13 @@ class Tree(object):
         """Returns a list with the k nearest neighbours of a given pivot
         community (x) that are closer than a distance d using the features
         specified in *argv"""
+	
+	kd_tree = self
+        axis_key = self.axis_key
+        dim = len(self.axis_key)
+	
+	if len(argv) == 0:
+            argv = axis_key
         
         # Checking if the arguments are of the correct type
         if(x.__class__.__name__ != 'Community'):
@@ -334,10 +341,6 @@ class Tree(object):
         for arg in argv:
             if arg not in x.__dict__.keys():
                 raise AttributeError('{} is not an attribute of the Tree class'.format(arg))
-                
-#        kd_tree = self
-        axis_key = self.axis_key
-        dim = len(self.axis_key)
 
         comm_pivot = x
         num_neighbours = k
