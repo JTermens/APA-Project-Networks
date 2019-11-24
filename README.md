@@ -1,4 +1,4 @@
-# K-nearest neighbour search of network communities in their K-d tree representation
+# K-nearest neighbour search of network communities using K-d trees
 
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of network communities extracted from a co-expression network. 
 
@@ -29,13 +29,17 @@ Community
 
 ### Tests and Profiling
 
-The Unittest library was used to test the performance and exception handling of the main implemented functions (`euclidean_distance`, `distance` and `group`). Following the standard specifications, there is one file per tested function and we have used the filename convention: `test_<function_name>.py`. To see the result of these tests run:
+The Unittest library was used to test the performance and exception handling of the main implemented functions (`euclidean_distance`, `distance` and `group`). Following the standard specifications, there is one file per tested function and we have used the filename convention `test_<function_name>.py` for conventional functions and `test_<container_name>.py` for the ones that belong to a given class. To perform the tests you have to run:
 
-```$ python -m unittest test_<function_name>.py```
+```$ python -m unittest test_<function/container_name>.py```
 
-example:
+Specifically,
 
-```$ python -m unittest test_euclidean_distance.py```
+Euclidean function: ```$ python -m unittest test_euclidean_distance.py```
+
+Distance function: ```$ python -m unittest test_Community.py```
+
+Group function: ```$ python -m unittest test_Tree.py```
 
 On the other hand, a profiling was done using cProfiler for the functions `make_kd_tree`, `get_nearest_neighbour`, and both implementations of k-neighbour search (`get_k_neighbours_heap` and `get_k_neighbours_eq`) benchmarking. Its implementation and results could be found at the [test folder](https://github.com/JTermens/APA-Project-Networks/blob/master/tests/). Furthermore, the functions found in the main code have been profiled too with cProfiler, results could be found at `main_profiling.txt`.
 
@@ -80,28 +84,4 @@ Program that from the selected file contructs a network and detects present comm
 The extracted features are: density, size, relative density, betweenness centrality, maximum betweenness centrality, average betweenness centrality, degree centrality, maximum degree centrality, average degree centrality, load centrality, maximum load centrality, average load centrality and community modularity within the network.
 
 
-## Getting Started
-
-It is important to notice the network consists of nodes and edges. The nodes are represented by the genes while the edges are computed using liner correlation and represent correlation values. Notice that you can choose the threshold of the value of correlation when constructing the network. In the case you don't specify it differently, the threshold is set to 0.55.
-Here we give a figure representing the density distribution of the correlation values that might help you decide your threshold. Bear in mind that the lower the selected threshold the longer the time of execution of the program.
-
-[![INSERT YOUR GRAPHIC HERE](https://github.com/JTermens/APA-Project-Networks/blob/master/distribution.png)]()
-
-### Prerequisites
-
-There are some Python 3 libraries that you will need to install before running our code. 
-We list them here:
-
-```
-Numpy
-Pandas
-Networkx
-Community
-```
-
-## Authors
-
-* **Alda Sabalić** 
-* **Joan Termens** 
-* **Beatriz Urda** 
 
