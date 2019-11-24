@@ -26,6 +26,8 @@ Numpy
 Pandas
 Networkx
 Community
+Math
+Functools
 ```
 
 ### Tests and Profiling
