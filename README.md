@@ -44,7 +44,7 @@ Distance function: ```$ python -m unittest test_Community.py```
 
 Group function: ```$ python -m unittest test_Tree.py```
 
-On the other hand, a profiling was done using cProfiler for the functions `make_kd_tree`, `get_nearest_neighbour`, and both implementations of k-neighbour search (`get_k_neighbours_heap` and `get_k_neighbours_eq`) benchmarking. Its implementation and results could be found at the [test folder](https://github.com/JTermens/APA-Project-Networks/blob/master/tests/). Furthermore, the functions found in the main code have been profiled too with cProfiler, results could be found at `main_profiling.txt`.
+On the other hand, a profiling was done using cProfiler for the functions `make_kd_tree`, `get_nearest_neighbour`, and both implementations of k-neighbour search (`get_k_neighbours_heap` and `get_k_neighbours_eq`) benchmarking. Its implementation and results could be found at the [test folder](https://github.com/JTermens/APA-Project-Networks/tree/master/k-d%20tree%20test). Furthermore, the functions found in the main code have been profiled too with cProfiler, results could be found at [profiling folder](https://github.com/JTermens/APA-Project-Networks/blob/master/profiling/).
 
 ## Objectives and followed steps
 
