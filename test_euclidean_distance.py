@@ -5,7 +5,7 @@ Test for the euclidean_distance function
 """
 
 import unittest
-from APA_project_v5 import euclidean_distance
+from networktools import euclidean_distance
 import numpy as np
 
 class TestEuclidean_distance(unittest.TestCase):
