@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 22 20:55:43 2019
-
-@author: beatrizurdag
+Test for the distance function of the Community class
 """
 
 import unittest
-from APA_project_v5 import Community,euclidean_distance
+from networktools import Community,euclidean_distance
 import numpy as np
 
 
