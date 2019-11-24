@@ -329,10 +329,15 @@ class Tree(object):
                     #return ("dist = {}; Community: dens = {}, size = {}, max btw = {}, ...)".format(nn[n][0],nn[n][1].dens,nn[n][1].size,nn[n][1].max_btw))
             #print('this is counter')
             #print(counter)
-            if counter < num_neighbours:
-               raise ValueError('There are no %s nearest neighbours. The maximum number of neighbours found at distance %s is %s. Redefine your search by selecting num_neighbours = %s or less. ' \
-               %(num_neighbours, distance, counter, counter))
-            return l 
+		
+            if counter < num_neighbours: 
+#               raise ValueError('There are no %s nearest neighbours. The maximum number of neighbours found at distance %s is %s. Redefine your search by selecting num_neighbours = %s or less. ' \
+#               %(num_neighbours, distance, counter, counter))
+                err_flag = True #err_flag is set True indicating that neighbours found < num_neighbours
+		print('There are no %s nearest neighbours. The maximum number of neighbours found at distance %s is %s' %(num_neighbours, distance, counter))
+            else:
+		err_flag = False
+            return l, err_flag
 
 
 
