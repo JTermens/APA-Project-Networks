@@ -3,17 +3,18 @@
 The aim of this project is to implement k-nearest neighbour search algorithm based on the K-d tree representation of network communities extracted from a co-expression network. 
 
 ## Application details
-In this sc to notice the network consists of nodes and edges. The nodes are represented by the genes while the edges are computed using liner correlation and represent correlation values between each pair of genes. In order for the script to work correctly, a file containing an adjacency matrix of the network must be provided. 
+The co-expression network used in this project consists of nodes and edges. The nodes are represented by the genes while the edges are computed by using liner correlation and represent correlation values between each pair of genes. In order for the script to work correctly, a file containing an adjacency matrix of the network must be provided. 
 
-Notice that you can choose the threshold of the value of correlation when constructing the network. In the case you don't specify it differently, the threshold is set to 0.38. 
-Here we give a figure representing the density distribution of the correlation values 
+Notice that you can choose the threshold of the value of correlation when constructing the network. In the case you don't specify it differently, the threshold is set to 0.38. However, it is very important to bear in mind that the number of generated communities depends directly on the threshold and that changing the threshold can affect your neighbour search.
+Here we give a figure representing the density distribution of the correlation values that might be used as an orientative guideline in the case the threshold needs to be changed.
+
 [![INSERT YOUR GRAPHIC HERE](https://github.com/JTermens/APA-Project-Networks/blob/master/distribution.png)]()
 
 
 ## Getting Started
 !! Here we should say that the objects are in one file named 'X', the functions in the file named '', the main here. 
 
-
+!! mention also the coverage folder that will be generated for the tests!!!
 ### Prerequisites
 
 There are some Python 3 libraries that you will need to install before running our code. 
@@ -59,7 +60,9 @@ To fast neighbour search, we opted for implementing a k-d tree structure for whi
 ### 5. Implement a function that finds the k-nearest neighbours on the K-d tree
 The function `get_k_neighbours` traverses a given kd-tree to find the k closest instances to the given one (called `pivot`). To do it, it successively traverses the kd-tree branckes looking for the closest instances and saving it the list `best_k`. This list contains tuples of the form (distance(pivot, instance), instance) sorted from the minimal to the maximal distance. This implementation using lists has been chosen, instead of the implementation using heaps, due to being able to compare equal distances and for being faster. Both implementations where benchamarked using one million 2-dim random points generated in the unit circle and looking for the thousand closest point to the origin. Its profiling showed that the list implementation was nearly 0.7 seconds faster than the heap one (23.513 and 24.229 seconds, respectively).
 
-## Code limitations
+## Limitations
+---------------rewrite, this is a template, mention optimality and k features------
+The current version of Code Maat processes all its content in memory. Thus, it may not scale to large input files (however, it depends a lot on the combination of parser and analysis). The recommendation is to limit the input by specifying a sensible start date (as discussed initially, you want to do that anyway to avoid confounds in the analysis).
 
 ## Authors
 
